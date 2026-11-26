@@ -11,7 +11,7 @@ _Last updated 2026-11-26. Theme: all yellow (`#FFD23F`) with deep-teal ink._
 | Google Calendar | ✅ Public "UTIP · UT International Pickleball Club" calendar (America/Chicago) | Subscribe: https://calendar.google.com/calendar/r?cid=5b94b9099a75cdd09d5b2955846f51de4a1bc5f9cfe1f6cbc2ffb269739be73b@group.calendar.google.com · Web view: https://calendar.google.com/calendar/embed?src=5b94b9099a75cdd09d5b2955846f51de4a1bc5f9cfe1f6cbc2ffb269739be73b@group.calendar.google.com&ctz=America/Chicago |
 | Calendar → Discord automation | ✅ Zapier workflow, enabled, trigger active: every new calendar event is posted to #events and pings @Member | https://zapier.com/workflow/01a21a37-f799-7e23-8603-da1e488892ac |
 | Canva | ✅ Folder with editable yellow-theme designs | https://www.canva.com/folder/FAHcDrfFYFM |
-| Linktree | ⏳ create the profile in the Linktree app (MCP can't create profiles on this plan) | |
+| Linktree | ✅ linktr.ee/utip: yellow background, bio, member form / Discord / calendar / Instagram links + Instagram & Discord icons | https://linktr.ee/utip |
 | Luma | ⏳ to do: `docs/luma-setup.md` | |
 | SMS (Twilio) | ⏳ to do: `docs/sms-setup.md` | |
 
