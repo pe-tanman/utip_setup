@@ -39,7 +39,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 GUILD_ID = int(os.environ.get("DISCORD_GUILD_ID", "0") or 0)
 LINKS = {
-    "Member form": os.environ.get("LINK_FORM", "https://forms.gle/REPLACE_ME"),
+    "Member form": os.environ.get("LINK_FORM", "https://docs.google.com/forms/d/e/1FAIpQLSeNMdK0OxRarvqIEcnPV3a4rZCL4zsUBN2K8LrAHyiHnj6Wlw/viewform"),
     "Luma calendar": os.environ.get("LINK_LUMA", "https://luma.com/REPLACE_ME"),
     "Instagram": os.environ.get("LINK_INSTAGRAM", "https://instagram.com/utip_austin"),
 }

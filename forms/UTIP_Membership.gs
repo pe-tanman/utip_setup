@@ -24,7 +24,7 @@ const CONFIG = {
   SHEET_TITLE: 'UTIP Members (do not share)',
   CLUB_NAME: 'UT International Pickleball Club (UTIP)',
   LINKS: {
-    discord: 'https://discord.gg/REPLACE_ME',
+    discord: 'https://discord.gg/uFwZuz9KA9',
     luma: 'https://luma.com/REPLACE_ME',
     instagram: 'https://instagram.com/utip_austin',
   },
@@ -32,6 +32,9 @@ const CONFIG = {
   // it receives new member names.
   OFFICER_WEBHOOK_URL: '',
   SEND_WELCOME_EMAIL: true,
+  // The live form was already created through Zapier. setup() attaches to it instead of making a new one.
+  // Leave '' to have setup() create a brand-new form.
+  EXISTING_FORM_ID: '17o2rVdPNrBEjgDV7YBRsa606WnHy3M1pSTuXpJi-wNA',
 };
 
 // Question titles double as keys, so keep them stable after launch.
@@ -57,6 +60,10 @@ function setup() {
   const props = PropertiesService.getScriptProperties();
   if (props.getProperty('FORM_ID')) {
     Logger.log('Already set up. Form: %s', FormApp.openById(props.getProperty('FORM_ID')).getPublishedUrl());
+    return;
+  }
+  if (CONFIG.EXISTING_FORM_ID) {
+    attachToExistingForm_(props);
     return;
   }
   const form = FormApp.create(CONFIG.FORM_TITLE)
@@ -110,6 +117,36 @@ function setup() {
   const def = ss.getSheetByName('Sheet1');
   if (def) ss.deleteSheet(def);
 
+  finishSetup_(form, ss, props);
+}
+
+/** Adds answer validation, settings, the sheet, trigger and API token to the Zapier-created form. */
+function attachToExistingForm_(props) {
+  const form = FormApp.openById(CONFIG.EXISTING_FORM_ID);
+  form.setAllowResponseEdits(true)
+    .setConfirmationMessage('You\'re in! Check your email for next steps: join our Discord and press Verify, then RSVP on Luma.');
+  const byTitle = {};
+  form.getItems(FormApp.ItemType.TEXT).forEach((it) => { byTitle[it.getTitle()] = it.asTextItem(); });
+  if (byTitle[Q.EID]) byTitle[Q.EID].setValidation(FormApp.createTextValidation()
+    .requireTextMatchesPattern('^[A-Za-z]{2,4}[0-9]{2,6}$')
+    .setHelpText('That does not look like a UT EID (letters followed by numbers, e.g. abc1234).').build());
+  if (byTitle[Q.EMAIL]) byTitle[Q.EMAIL].setValidation(FormApp.createTextValidation().requireTextIsEmail().build());
+  if (byTitle[Q.PHONE]) byTitle[Q.PHONE].setValidation(FormApp.createTextValidation()
+    .requireTextMatchesPattern('^[+]?[0-9 ()\\-.]{10,18}$')
+    .setHelpText('Please enter a 10-digit US phone number.').build());
+
+  const ss = SpreadsheetApp.create(CONFIG.SHEET_TITLE);
+  form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
+  const members = ss.insertSheet('Members');
+  members.appendRow(MEMBER_HEADERS);
+  members.setFrozenRows(1);
+  members.getRange(1, 1, 1, MEMBER_HEADERS.length).setFontWeight('bold');
+  const def = ss.getSheetByName('Sheet1');
+  if (def) ss.deleteSheet(def);
+  finishSetup_(form, ss, props);
+}
+
+function finishSetup_(form, ss, props) {
   ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
 
   const token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
