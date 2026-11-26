@@ -2,7 +2,7 @@
 
 Welcome! Five steps, about five minutes. (This guide is also Instagram post 3 and the bot's welcome DM.)
 
-1. **Follow us on Instagram** at @utipickleball and turn on post + story notifications. Every event drops
+1. **Follow us on Instagram** at @utip_austin and turn on post + story notifications. Every event drops
    there first.
 2. **Fill out the member form** (link in bio): name, UT EID, email, phone, Discord username. Say **yes**
    to text alerts if you want a text when a new event is posted (reply STOP anytime). We need the member

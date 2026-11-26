@@ -64,7 +64,7 @@ def main():
     tag = "LIVE" if live else "DRY-RUN"
     slug = path.stem
     out_dir = ROOT / "exports" / "events" / slug
-    handle = env("IG_HANDLE", "@utipickleball")
+    handle = env("IG_HANDLE", "@utip_austin")
     print(f"[{tag}] {ev['title']} | {lab['date_label']} {lab['time_label']} | steps: {', '.join(steps)}")
 
     # 1. Luma --------------------------------------------------------------

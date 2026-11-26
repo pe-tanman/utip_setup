@@ -26,7 +26,7 @@ const CONFIG = {
   LINKS: {
     discord: 'https://discord.gg/REPLACE_ME',
     luma: 'https://luma.com/REPLACE_ME',
-    instagram: 'https://instagram.com/utipickleball',
+    instagram: 'https://instagram.com/utip_austin',
   },
   // Discord webhook for a private #officer-log channel (optional). Never a public channel:
   // it receives new member names.

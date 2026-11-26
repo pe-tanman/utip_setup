@@ -6,7 +6,7 @@
 ## 1. Create the account (10 min)
 1. Use a **shared club email** (e.g. a new Gmail like `utipickleball@gmail.com`), not a personal one, so
    the account survives officer turnover. Store the password in a shared password manager.
-2. Sign up in the Instagram app → **Username**: first choice `utipickleball`; backups: `utip.atx`,
+2. ✅ Done: the account is **@utip_austin** (connected to Buffer for scheduling). Alternative handles considered: `utip.atx`,
    `ut.intlpickleball`, `utip_club`. (If you change the handle, update `design/data/club.json` and re-render.)
 3. **Name** field (searchable!): `UTIP · UT Intl Pickleball Club`
 4. **Profile picture**: `exports/instagram/profile-picture.png`

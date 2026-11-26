@@ -41,7 +41,7 @@ GUILD_ID = int(os.environ.get("DISCORD_GUILD_ID", "0") or 0)
 LINKS = {
     "Member form": os.environ.get("LINK_FORM", "https://forms.gle/REPLACE_ME"),
     "Luma calendar": os.environ.get("LINK_LUMA", "https://luma.com/REPLACE_ME"),
-    "Instagram": os.environ.get("LINK_INSTAGRAM", "https://instagram.com/utipickleball"),
+    "Instagram": os.environ.get("LINK_INSTAGRAM", "https://instagram.com/utip_austin"),
 }
 STATE_FILE = HERE / "state.json"
 ORANGE = discord.Color.from_rgb(0xBF, 0x57, 0x00)
