@@ -8,9 +8,9 @@ which registered orgs can't use without approval.
 
 | Token | Hex | Use |
 |---|---|---|
-| Burnt orange | `#BF5700` | primary, backgrounds, headlines on cream |
-| Deep teal | `#0F4C5C` | secondary, text on yellow/cream |
-| Ball yellow | `#F4E04D` | highlights, accents, numbers |
+| Sunny yellow | `#FFD23F` | **primary: every background** (deep `#FFC20E`, soft `#FFF1B5` for variety) |
+| Deep teal | `#0F4C5C` | ink, highlights, buttons, numbers |
+| Cream | `#FFFBEA` | cards, the ball in the logo |
 | Cream | `#FFF4E6` | light backgrounds, text on dark |
 | Dark teal | `#082F39` | body text |
 

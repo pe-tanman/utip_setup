@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
   <title>UTIP logo mark</title>
   <defs><clipPath id="ball"><circle cx="168" cy="200" r="96"/></clipPath></defs>
-  <circle cx="200" cy="200" r="200" fill="#BF5700"/>
-  <circle cx="200" cy="200" r="184" fill="none" stroke="#FFF4E6" stroke-width="5"/>
+  <circle cx="200" cy="200" r="200" fill="#FFD23F"/>
+  <circle cx="200" cy="200" r="184" fill="none" stroke="#0F4C5C" stroke-width="5"/>
   <!-- paddle: face upper-right, handle toward lower-right -->
   <g transform="rotate(-32 262 150)">
     <rect x="206" y="54" width="118" height="164" rx="58" fill="#0F4C5C"/>
@@ -12,7 +12,7 @@
   </g>
   <!-- ball / globe -->
   <circle cx="168" cy="200" r="101" fill="#0F4C5C"/>
-  <circle cx="168" cy="200" r="96" fill="#F4E04D"/>
+  <circle cx="168" cy="200" r="96" fill="#FFFBEA"/>
   <g clip-path="url(#ball)" fill="none" stroke="#0F4C5C" stroke-width="3.5" opacity="0.5">
     <ellipse cx="168" cy="200" rx="38" ry="96"/>
     <ellipse cx="168" cy="200" rx="74" ry="96"/>
@@ -32,5 +32,5 @@
     <circle cx="103" cy="243" r="5"/><circle cx="233" cy="243" r="5"/>
     <circle cx="168" cy="112" r="5"/><circle cx="168" cy="288" r="5"/>
   </g>
-  <circle cx="138" cy="160" r="18" fill="#FFFFFF" opacity="0.2"/>
+  <circle cx="138" cy="160" r="18" fill="#FFD23F" opacity="0.35"/>
 </svg>

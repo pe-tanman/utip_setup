@@ -44,3 +44,31 @@ body { font-family: var(--body); color: var(--ink); background: var(--cream); ov
 .lead { font-size: 46px; }
 .foot { position: relative; z-index: 2; }
 .foot img { display: none; } .foot { justify-content: flex-start; } .foot.split { justify-content: space-between; }
+
+/* ===== Yellow theme (Nov 2026): every surface is yellow, teal is the ink/accent ===== */
+:root {
+  --yellow: #FFD23F;
+  --yellow-deep: #FFC20E;
+  --yellow-soft: #FFF1B5;
+  --orange: #0F4C5C;   /* former orange accents now read as teal ink */
+  --ball: #0F4C5C;     /* former yellow-on-dark accents now teal */
+  --cream: #FFFBEA;
+  --ink: #102A31;
+}
+body { background: var(--yellow); }
+.bg-orange, .bg-ball { background: var(--yellow); color: var(--ink); }
+.bg-teal { background: var(--yellow-deep); color: var(--ink); }
+.bg-cream { background: var(--yellow-soft); color: var(--ink); }
+.hl { background: var(--teal); color: var(--yellow); }
+.pill.ball, .pill.teal { background: var(--teal); color: var(--yellow); }
+.pill.cream { background: var(--cream); color: var(--teal); }
+.num { background: var(--teal) !important; color: var(--yellow) !important; }
+.photo { color: var(--yellow) !important; }
+.chip { background: rgba(15,76,92,.12) !important; }
+.feat div { background: rgba(15,76,92,.10) !important; }
+.when { background: var(--teal) !important; color: var(--yellow) !important; }
+.hicon b { color: var(--yellow) !important; }
+.mark { box-shadow: 0 0 0 6px rgba(15,76,92,.18) !important; }
+.card { background: var(--cream) !important; }
+.cmd { background: var(--teal) !important; color: var(--yellow) !important; }
+.peek.faint { opacity: .22; }
