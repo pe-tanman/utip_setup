@@ -1,0 +1,7 @@
+.env
+*.env
+!.env.example
+discord/bot/state.json
+__pycache__/
+exports/events/
+node_modules/

@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><title>UTIP stories</title>
+<link rel="stylesheet" href="base.css"><script src="fill.js"></script>
+<style>
+.slide { padding: 220px 90px 260px; }
+.sticker-zone { margin-top: auto; border: 6px dashed currentColor; border-radius: 40px; padding: 40px; text-align: center; font-weight: 800; font-size: 38px; opacity: .9; }
+.sticker-zone small { display: block; font-weight: 600; font-size: 26px; opacity: .8; margin-top: 8px; }
+.big-logo { width: 460px; height: 460px; margin: 0 auto 60px; display: block; }
+.ev-date { font-family: var(--display); font-weight: 900; font-size: 92px; line-height: 1; color: var(--ball); }
+.meta { font-size: 44px; font-weight: 600; margin: 16px 0; }
+.hicon { margin: auto; width: 640px; height: 640px; border-radius: 50%; background: var(--teal); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.hicon b { font-family: var(--display); font-weight: 900; font-size: 120px; color: var(--ball); }
+.hicon img { width: 220px; height: 220px; margin-bottom: 10px; }
+</style></head><body>
+<!-- generic "join us" story -->
+<section class="slide bg-orange" data-slide="join">
+  <img class="big-logo" src="../../brand/logo.svg" alt="">
+  <div class="h1" style="text-align:center">New club alert!</div>
+  <div class="lead" style="text-align:center;margin-top:30px">International Pickleball at UT &mdash; weekly games, socials, and friends from everywhere.</div>
+  <div class="lead" style="text-align:center;margin-top:30px;font-weight:800">Everyone welcome.</div>
+  <div class="sticker-zone">Place link sticker here<small>Tap to join the club</small></div>
+</section>
+<!-- event story: filled from an event YAML by the pipeline -->
+<section class="slide bg-teal" data-slide="event">
+  <img class="peek" src="../../brand/logo-icon.svg" alt="" style="opacity:.08;width:760px;height:760px;right:-300px;bottom:-120px">
+  <div class="kicker" style="color:var(--ball)" data-k="event.kind"></div>
+  <div class="h1" style="margin:30px 0 50px;font-size:128px" data-k="event.title"></div>
+  <div class="ev-date" data-k="event.date_label"></div>
+  <div class="meta" data-k="event.time_label"></div>
+  <div class="meta" data-k="event.location"></div>
+  <div class="body" style="margin-top:36px" data-k="event.blurb"></div>
+  <div class="sticker-zone">RSVP &uarr; tap the Luma link<small>Tap the link sticker to save your spot</small></div>
+</section>
+<!-- highlight covers -->
+<section class="slide bg-orange" data-slide="hl-about"><div class="hicon"><img src="../../brand/logo-icon.svg" alt=""><b>ABOUT</b></div></section>
+<section class="slide bg-orange" data-slide="hl-events"><div class="hicon"><b style="font-size:200px">&#9673;</b><b>EVENTS</b></div></section>
+<section class="slide bg-orange" data-slide="hl-join"><div class="hicon"><b style="font-size:200px">+</b><b>JOIN</b></div></section>
+<section class="slide bg-orange" data-slide="hl-team"><div class="hicon"><b style="font-size:200px">&#9786;</b><b>TEAM</b></div></section>
+</body></html>

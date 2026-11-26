@@ -1,0 +1,115 @@
+[
+  {
+    "name": "profile-picture",
+    "template": "profile.html",
+    "folder": "instagram",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "name": "post1-welcome",
+    "template": "post-welcome.html",
+    "folder": "instagram/post1-welcome",
+    "width": 1080,
+    "height": 1350,
+    "pages": [
+      "cover",
+      "why",
+      "what",
+      "where",
+      "everyone",
+      "join"
+    ]
+  },
+  {
+    "name": "post2-officers",
+    "template": "post-officers.html",
+    "folder": "instagram/post2-officers",
+    "width": 1080,
+    "height": 1350,
+    "pages": "officers"
+  },
+  {
+    "name": "post3-get-on-board",
+    "template": "post-onboard.html",
+    "folder": "instagram/post3-get-on-board",
+    "width": 1080,
+    "height": 1350,
+    "pages": [
+      "cover",
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5",
+      "done"
+    ]
+  },
+  {
+    "name": "story-join",
+    "template": "story.html",
+    "folder": "instagram/stories",
+    "width": 1080,
+    "height": 1920,
+    "pages": [
+      "join"
+    ]
+  },
+  {
+    "name": "highlight",
+    "template": "story.html",
+    "folder": "instagram/highlight-covers",
+    "width": 1080,
+    "height": 1920,
+    "pages": [
+      "hl-about",
+      "hl-events",
+      "hl-join",
+      "hl-team"
+    ]
+  },
+  {
+    "name": "poster-letter",
+    "template": "poster.html",
+    "folder": "posters",
+    "width": 816,
+    "height": 1056,
+    "scale": 3,
+    "pdf": true,
+    "pages": [
+      "poster"
+    ]
+  },
+  {
+    "name": "flyer-half-letter",
+    "template": "poster.html",
+    "folder": "posters",
+    "width": 528,
+    "height": 816,
+    "scale": 3,
+    "pdf": true,
+    "pages": [
+      "flyer"
+    ]
+  },
+  {
+    "name": "event-post",
+    "template": "post-event.html",
+    "width": 1080,
+    "height": 1350,
+    "event": true,
+    "pages": [
+      "event"
+    ]
+  },
+  {
+    "name": "event-story",
+    "template": "story.html",
+    "width": 1080,
+    "height": 1920,
+    "event": true,
+    "pages": [
+      "event"
+    ]
+  }
+]

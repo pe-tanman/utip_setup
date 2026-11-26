@@ -1,0 +1,74 @@
+<!doctype html><html><head><meta charset="utf-8"><title>UTIP welcome carousel</title>
+<link rel="stylesheet" href="base.css"><script src="fill.js"></script>
+<style>
+.cover-logo { width: 520px; height: 520px; margin: 30px auto 40px; display: block; }
+.num { font-family: var(--display); font-weight: 900; font-size: 64px; width: 96px; height: 96px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex: none; }
+.row { display: flex; gap: 32px; align-items: center; margin: 22px 0; }
+.list .row .body { font-weight: 600; }
+.mark { width: 22px; height: 22px; border-radius: 50%; background: var(--ball); flex: none; box-shadow: 0 0 0 6px rgba(244,224,77,.25); }
+.place { border: 5px solid var(--teal-dark); border-radius: 28px; padding: 30px 40px; margin: 14px 0; }
+.place b { font-family: var(--display); font-size: 58px; font-weight: 900; display: block; }
+</style></head><body>
+
+<section class="slide bg-orange" data-slide="cover">
+  <div class="dots" style="top:-80px;right:-80px"></div>
+  <div class="kicker" style="text-align:center">Hello, UT Austin</div>
+  <img class="cover-logo" src="../../brand/logo.svg" alt="">
+  <div class="h1" style="text-align:center">Welcome to UTIP</div>
+  <div class="lead" style="text-align:center;margin-top:24px" data-k="club.name"></div>
+  <div class="foot split"><span data-k="club.tagline"></span><span class="swipe">SWIPE &rarr;</span></div>
+</section>
+
+<section class="slide bg-cream" data-slide="why">
+  <img class="peek faint" src="../../brand/logo-icon.svg" alt="">
+  <div class="kicker" style="color:var(--orange)">Why we started UTIP</div>
+  <div class="h2" style="margin:36px 0 44px">We went looking for an international community at UT&hellip;</div>
+  <div class="lead">&hellip;and found almost <span class="hl">no non-religious international student orgs.</span></div>
+  <div class="lead" style="margin-top:34px">The few that exist are often inactive, and they don&rsquo;t always feel welcoming when you&rsquo;re new.</div>
+  <div class="h2" style="margin-top:56px;color:var(--orange)">So we built one.</div>
+  <div class="foot"><img src="../../brand/logo-icon.svg" alt=""><span class="swipe">2 / 6 &rarr;</span></div>
+</section>
+
+<section class="slide bg-teal" data-slide="what">
+  <img class="peek" src="../../brand/logo-icon.svg" alt="" style="width:620px;height:620px;right:-200px;bottom:-200px">
+  <div class="kicker" style="color:var(--ball)">What UTIP is</div>
+  <div class="h2" style="margin:36px 0 48px">A home for international students &mdash; and anyone curious about the world.</div>
+  <div class="list">
+    <div class="row"><span class="mark"></span><span class="body">Weekly pickleball, every skill level</span></div>
+    <div class="row"><span class="mark"></span><span class="body">Socials, food &amp; culture nights</span></div>
+    <div class="row"><span class="mark"></span><span class="body">Friends from every corner of the globe</span></div>
+    <div class="row"><span class="mark"></span><span class="body">Zero pressure. Just show up.</span></div>
+  </div>
+  <div class="foot"><img src="../../brand/logo-icon.svg" alt=""><span class="swipe">3 / 6 &rarr;</span></div>
+</section>
+
+<section class="slide bg-ball" data-slide="where">
+  <img class="peek" src="../../brand/logo-icon.svg" alt="" style="width:640px;height:640px;right:-180px;bottom:-200px">
+  <div class="kicker">When &amp; where</div>
+  <div class="h1" style="margin:30px 0 40px">Every week.<br>On the courts.</div>
+  <div class="place"><b data-k="club.meeting.where"></b><span class="body" data-k="club.meeting.when"></span></div>
+  <div class="lead" style="margin-top:36px;font-weight:700" data-k="club.meeting.note"></div>
+  <div class="foot"><img src="../../brand/logo-icon.svg" alt=""><span class="swipe">4 / 6 &rarr;</span></div>
+</section>
+
+<section class="slide bg-orange" data-slide="everyone">
+  <img class="peek faint" src="../../brand/logo-icon.svg" alt="" style="width:600px;height:600px">
+  <div class="kicker">Domestic students</div>
+  <div class="h1" style="margin:30px 0 44px">You are <span class="hl">so</span> welcome here.</div>
+  <div class="lead">We&rsquo;re the <b>International</b> Pickleball Club because our founders are international students &mdash; not because it&rsquo;s only for us.</div>
+  <div class="lead" style="margin-top:30px">If you want friends from around the world and love learning new cultures, this is your club.</div>
+  <div class="foot"><img src="../../brand/logo-icon.svg" alt=""><span class="swipe">5 / 6 &rarr;</span></div>
+</section>
+
+<section class="slide bg-cream" data-slide="join">
+  <img class="peek" src="../../brand/logo-icon.svg" alt="" style="width:560px;height:560px;right:-170px;bottom:-170px">
+  <div class="kicker" style="color:var(--orange)">Join us</div>
+  <div class="h1" style="margin:30px 0 50px">3 steps to get in the game</div>
+  <div class="row"><span class="num bg-orange">1</span><span class="lead"><b>Fill out the member form</b> (2 min)</span></div>
+  <div class="row"><span class="num bg-teal">2</span><span class="lead"><b>Join our Discord</b> &amp; say hi</span></div>
+  <div class="row"><span class="num bg-ball">3</span><span class="lead"><b>RSVP on Luma</b> for this week</span></div>
+  <div style="margin-top:54px"><span class="pill teal">All links in bio &middot; <span data-k="club.handle"></span></span></div>
+  <div class="foot"><img src="../../brand/logo-icon.svg" alt=""><span>6 / 6</span></div>
+</section>
+</body></html>

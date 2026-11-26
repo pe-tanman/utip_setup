@@ -1,0 +1,22 @@
+# Copy this file for each event, edit, then run:
+#   python3 pipeline/announce.py pipeline/events/<file>.yaml          (preview)
+#   python3 pipeline/announce.py pipeline/events/<file>.yaml --live   (publish everywhere)
+title: Weekly Open Play
+kind: Weekly pickleball
+start: 2026-12-05T10:00
+end: 2026-12-05T12:00
+timezone: America/Chicago
+location: Whitaker Courts
+address: Whitaker Courts, The University of Texas at Austin, Austin, TX
+blurb: >
+  All levels welcome! We'll pair beginners with experienced players, rotate partners every game,
+  and grab food together after. Bring water and sneakers.
+description: |
+  **UT International Pickleball Club (UTIP)** weekly open play.
+
+  - All skill levels; never played? We'll teach you.
+  - International and domestic students all welcome.
+  - Bring water and court shoes. Paddles: bring yours if you have one.
+
+  Join our Discord and member list: see the links on our Instagram @utipickleball.
+hashtags: "#UTAustin #pickleball #internationalstudents #UTIP #hookem"

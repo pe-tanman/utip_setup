@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><title>UTIP officers carousel</title>
+<link rel="stylesheet" href="base.css"><script src="fill.js"></script>
+<style>
+.photo { width: 470px; height: 470px; border-radius: 50%; border: 12px solid var(--ball); background: var(--teal-dark) center/cover;
+  display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 900; font-size: 150px; color: var(--ball); margin: 10px 0 40px; }
+.chips { display: flex; flex-wrap: wrap; gap: 16px; margin: 26px 0 34px; }
+.chip { padding: 12px 26px; border-radius: 999px; background: rgba(255,244,230,.14); font-weight: 700; font-size: 30px; }
+.qa { margin: 18px 0; font-size: 42px; } .qa small { display: block; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 24px; color: var(--ball); margin-bottom: 6px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; margin-top: 54px; }
+.mini { text-align: center; } .mini .photo { width: 250px; height: 250px; font-size: 90px; margin: 0 auto 16px; border-width: 8px; }
+.mini b { display: block; font-size: 32px; } .mini span { font-size: 26px; opacity: .85; }
+</style></head><body>
+<section class="slide bg-orange" data-slide="cover">
+  <div class="kicker">Meet the team</div>
+  <div class="h1" style="margin:24px 0 0">Your UTIP officers</div>
+  <div class="grid" id="grid"></div>
+  <div class="foot"><span class="swipe">SWIPE TO MEET US &rarr;</span></div>
+</section>
+<section class="slide bg-teal" data-slide="officer">
+  <img class="peek faint" src="../../brand/logo-icon.svg" alt="">
+  <div class="kicker" style="color:var(--ball)" id="role"></div>
+  <div class="photo" id="photo" style="margin-top:36px"></div>
+  <div class="h2" id="name"></div>
+  <div class="chips"><span class="chip" id="from"></span><span class="chip" id="major"></span></div>
+  <div class="qa body"><small>Fun fact</small><span id="fact"></span></div>
+  <div class="qa body"><small>Favorite shot</small><span id="shot"></span></div>
+  <div class="foot"><span id="pg"></span></div>
+</section>
+<script>
+const initials = (n) => n.split(/\s+/).map((w) => w[0] || '').join('').slice(0, 2).toUpperCase();
+function setPhoto(el, o) { if (o.photo) { el.style.backgroundImage = `url(../data/photos/${o.photo})`; el.textContent = ''; } else el.textContent = initials(o.name); }
+window.UTIP_AFTER = (D) => {
+  const offs = D.officers;
+  const grid = document.getElementById('grid');
+  offs.forEach((o) => { const d = document.createElement('div'); d.className = 'mini';
+    d.innerHTML = '<div class="photo"></div><b></b><span></span>'; setPhoto(d.firstChild, o);
+    d.querySelector('b').textContent = o.name; d.querySelector('span').textContent = o.role; grid.appendChild(d); });
+  const m = /^o(\d+)$/.exec(D.slide || '');
+  if (m) {
+    document.querySelector('[data-slide=officer]').classList.add('on');
+    const o = offs[+m[1]];
+    for (const k of ['role', 'name', 'from', 'major', 'fact', 'shot']) document.getElementById(k).textContent = o[k];
+    setPhoto(document.getElementById('photo'), o);
+    document.getElementById('pg').textContent = `${+m[1] + 2} / ${offs.length + 1}`;
+  }
+};
+</script>
+</body></html>

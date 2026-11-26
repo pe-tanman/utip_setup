@@ -1,0 +1,19 @@
+{
+  "name": "UT International Pickleball Club",
+  "short": "UTIP",
+  "handle": "@utipickleball",
+  "tagline": "Play. Connect. Belong.",
+  "meeting": {
+    "frequency": "Every week",
+    "when": "Day & time posted on Luma",
+    "where": "CCF or Whitaker Courts",
+    "note": "No experience needed. Beginners very welcome."
+  },
+  "links": {
+    "hub": "https://utip-placeholder.link",
+    "form": "https://forms.gle/REPLACE_ME",
+    "discord": "https://discord.gg/REPLACE_ME",
+    "luma": "https://luma.com/REPLACE_ME",
+    "instagram": "https://instagram.com/utipickleball"
+  }
+}

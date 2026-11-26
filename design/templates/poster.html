@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><title>UTIP poster</title>
+<link rel="stylesheet" href="base.css"><script src="fill.js"></script>
+<style>
+/* Letter size at 96 css px/in = 816 x 1056 */
+.slide { padding: 56px 56px 44px; }
+.top { display: flex; align-items: center; gap: 26px; }
+.top img { width: 150px; height: 150px; }
+.p-h1 { font-family: var(--display); font-weight: 900; font-size: 72px; line-height: .98; letter-spacing: -.02em; margin: 30px 0 20px; }
+.p-lead { font-size: 26px; line-height: 1.35; font-weight: 500; }
+.feat { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 26px 0; }
+.feat div { background: rgba(255,244,230,.12); border-radius: 18px; padding: 20px; font-weight: 700; font-size: 21px; line-height: 1.3; }
+.feat b { display: block; font-family: var(--display); font-size: 30px; color: var(--ball); margin-bottom: 6px; }
+.bottom { margin-top: auto; display: flex; gap: 30px; align-items: stretch; }
+.qr { background: #fff; border-radius: 20px; padding: 16px; width: 230px; text-align: center; color: var(--teal-dark); font-weight: 800; font-size: 17px; }
+.qr img { width: 198px; height: 198px; display: block; margin-bottom: 8px; }
+.when { flex: 1; background: var(--ball); color: var(--teal-dark); border-radius: 20px; padding: 24px 28px; display: flex; flex-direction: column; justify-content: center; }
+.when b { font-family: var(--display); font-weight: 900; font-size: 32px; line-height: 1.05; }
+.when span { font-size: 21px; font-weight: 600; margin-top: 8px; }
+.flyer .p-h1 { font-size: 64px; margin: 24px 0 14px; } .flyer .p-lead { font-size: 21px; }
+.flyer .top img { width: 96px; height: 96px; } .flyer .qr { width: 190px; } .flyer .qr img { width: 158px; height: 158px; }
+.flyer .when b { font-size: 28px; } .flyer .when span { font-size: 17px; }
+</style></head><body>
+<section class="slide bg-orange" data-slide="poster">
+  <img class="peek faint" src="../../brand/logo-icon.svg" alt="" style="width:520px;height:520px;right:-170px;top:-120px;bottom:auto">
+  <div class="top"><img src="../../brand/logo.svg" alt=""><div><div class="kicker" style="font-size:20px">New student org</div><div style="font-family:var(--display);font-weight:900;font-size:34px;line-height:1.05">UT International<br>Pickleball Club</div></div></div>
+  <div class="p-h1">Play pickleball.<br>Make friends<br>from <span class="hl">everywhere.</span></div>
+  <div class="p-lead">A welcoming, non-religious community for international students &mdash; and every domestic student who loves meeting people from other cultures.</div>
+  <div class="feat"><div><b>Weekly</b>pickleball, all skill levels</div><div><b>Socials</b>food, culture &amp; game nights</div><div><b>Everyone</b>welcome &mdash; no experience needed</div></div>
+  <div class="bottom">
+    <div class="qr"><img src="../data/qr-hub.svg" alt="">SCAN TO JOIN</div>
+    <div class="when"><b><span style="font-size:inherit;font-weight:inherit;margin:0" data-k="club.meeting.frequency"></span> &middot; <span style="font-size:inherit;font-weight:inherit;margin:0" data-k="club.meeting.where"></span></b><span data-k="club.meeting.when"></span><span style="font-weight:800" data-k="club.handle"></span></div>
+  </div>
+</section>
+<section class="slide bg-teal flyer" data-slide="flyer">
+  <div class="top"><img src="../../brand/logo.svg" alt=""><div style="font-family:var(--display);font-weight:900;font-size:28px;line-height:1.05">UT International<br>Pickleball Club</div></div>
+  <div class="p-h1">Play. Connect.<br><span class="hl">Belong.</span></div>
+  <div class="p-lead">Weekly pickleball + socials for international students and anyone curious about the world. Beginners welcome!</div>
+  <div class="bottom" style="margin-top:auto">
+    <div class="qr"><img src="../data/qr-hub.svg" alt="">SCAN TO JOIN</div>
+    <div class="when"><b data-k="club.meeting.where"></b><span data-k="club.meeting.when"></span><span style="font-weight:800" data-k="club.handle"></span></div>
+  </div>
+</section>
+</body></html>
