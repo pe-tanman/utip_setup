@@ -87,12 +87,12 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
 <header class="hero">
   <div class="wrap">
     <h1>UTIP Officer Console</h1>
-    <p>Add events and send announcements. A calendar event also posts to Discord #events, puts up an Instagram story with an RSVP link, and sends a reminder 24 hours before.</p>
+    <p>Add events and send announcements. One event creates the Luma RSVP page and the calendar entry, then Discord #events, an Instagram story with the RSVP link, and a 24-hour reminder follow automatically.</p>
     <div class="status" id="status" aria-live="polite">
       <span class="chip" data-server="Google Calendar"><span class="dot"></span>Google Calendar</span>
       <span class="chip" data-server="Zapier"><span class="dot"></span>Discord (via Zapier)</span>
       <span class="chip" data-server="Buffer"><span class="dot"></span>Instagram (via Buffer)</span>
-      <span class="chip"><span class="dot warn"></span>Luma: not connected</span>
+      <span class="chip" data-server="luma"><span class="dot"></span>Luma RSVPs</span>
     </div>
   </div>
 </header>
@@ -107,7 +107,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
   <!-- NEW EVENT -->
   <section class="panel" id="p-event" role="tabpanel" aria-labelledby="tab-event">
     <h2>Add an event</h2>
-    <p class="lede">Adds it to the public UTIP calendar. The Discord post, Instagram story and 24-hour reminder follow automatically.</p>
+    <p class="lede">Creates the Luma RSVP page and adds the event to the public UTIP calendar. The Discord post, Instagram story and 24-hour reminder follow automatically.</p>
     <form id="eventForm" novalidate>
       <label>Title <input id="evTitle" required maxlength="90" placeholder="Weekly Open Play"></label>
       <div class="row">
@@ -125,7 +125,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
         </label>
         <label id="evOtherWrap" hidden>Other location <input id="evOther" maxlength="120" placeholder="Address or venue"></label>
       </div>
-      <label>RSVP link <small>(optional: Luma page or a form. The story sticker and Discord post use it; without one they link to linktr.ee/utip.)</small>
+      <label>Own RSVP link <small>(optional. Leave empty when creating a Luma event: its page becomes the RSVP link.)</small>
         <input id="evRsvp" type="url" placeholder="https://luma.com/…" inputmode="url">
       </label>
       <label>Details <small>(shown in Discord and on the calendar)</small>
@@ -135,9 +135,9 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
         <legend>Options</legend>
         <label class="check"><input type="checkbox" id="evRepeat"> <span>Repeats weekly for <input id="evWeeks" type="number" min="2" max="20" value="10" style="width:5.5em;display:inline-block;padding:4px 8px"> weeks</span></label>
         <label class="check"><input type="checkbox" id="evAnnounce"> <span>Also post a separate announcement in Discord <b>#announcements</b> (pings @Member)</span></label>
-        <label class="check disabled"><input type="checkbox" disabled> <span>Create a Luma event: connect Luma first (add it in claude.ai → Connectors)</span></label>
+        <label class="check"><input type="checkbox" id="evLuma" checked> <span>Create the RSVP page on <b>Luma</b> (luma.com/utip). Weekly repeats get one Luma event per week.</span></label>
       </fieldset>
-      <button class="btn" id="evSubmit" type="submit">Add to calendar</button>
+      <button class="btn" id="evSubmit" type="submit">Create event</button>
     </form>
     <div class="results" id="evResults" aria-live="polite"></div>
   </section>
@@ -176,6 +176,9 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
     <h2>Upcoming on the UTIP calendar</h2>
     <p class="lede" id="upMeta">Loads from Google Calendar.</p>
     <div class="list" id="upList"><div class="empty">Waiting for Google Calendar…</div></div>
+    <h2 style="margin-top:22px">RSVPs on Luma</h2>
+    <p class="lede" id="lumaMeta">Upcoming events on luma.com/utip. Tap a count to refresh it.</p>
+    <div class="list" id="lumaList"><div class="empty">Waiting for Luma…</div></div>
     <p class="note">To change or cancel an event, edit it in Google Calendar on the "UTIP · UT International Pickleball Club" calendar. Cancelled events are not announced.</p>
   </section>
 
@@ -194,6 +197,8 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
   const CAL = "5b94b9099a75cdd09d5b2955846f51de4a1bc5f9cfe1f6cbc2ffb269739be73b@group.calendar.google.com";
   const TZ = "America/Chicago";
   const LINKTREE = "https://linktr.ee/utip";
+  const LUMA_CAL = "cal-dmnwrdfkfGWq3pO";
+  const LUMA_PAGE = "https://luma.com/utip";
   const ANNOUNCE_CHANNEL = "1575566189479071919";
   const MEMBER_ROLE = "1575567325023838290";
   const IG_CHANNEL = "6b086b7c8541f09ecbb2d713";
@@ -283,6 +288,41 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
     });
   }
 
+  // ---------- Luma ----------
+  function chicagoOffset(dateStr, timeStr) {
+    // e.g. "-06:00" for the given local Austin date/time (handles daylight saving)
+    try {
+      const guess = new Date(`${dateStr}T${timeStr}:00Z`);
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: TZ, timeZoneName: "shortOffset" }).formatToParts(guess);
+      const name = (parts.find((x) => x.type === "timeZoneName") || {}).value || "GMT-6";
+      const m = name.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+      if (!m) return "-06:00";
+      return `${m[1]}${m[2].padStart(2, "0")}:${m[3] || "00"}`;
+    } catch { return "-06:00"; }
+  }
+  function addDays(dateStr, n) {
+    const d = new Date(`${dateStr}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+  async function createLuma({ title, date, start, end, place, desc }) {
+    const input = {
+      calendar_id: LUMA_CAL,
+      name: title,
+      start_at: `${date}T${start}:00${chicagoOffset(date, start)}`,
+      end_at: `${date}T${end}:00${chicagoOffset(date, end)}`,
+      timezone: TZ,
+      description_md: [desc || "Weekly pickleball + socials with UTIP. All levels welcome; international and domestic students welcome!", "", "All UTIP links: " + LINKTREE].join("\n"),
+      tint_color: "#FFD23F",
+      visibility: "public",
+    };
+    if (place) input.geo_address_json = { type: "lookup", query: /court|ccf/i.test(place) && !/austin/i.test(place) ? `${place}, University of Texas at Austin, Austin, TX` : place };
+    const r = await mcp.callTool("luma", "create_event", input);
+    const p = r && r.payload ? r.payload : {};
+    const ev = p.event || p;
+    const url = [ev.url, p.url].find((u) => typeof u === "string" && /^https:\/\//.test(u)) || null;
+    return { url, id: ev.api_id || ev.id || null };
+  }
+
   // ---------- NEW EVENT ----------
   $("evPlace").addEventListener("change", () => { $("evOtherWrap").hidden = $("evPlace").value !== "__other"; });
   try { $("evDate").value = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10); } catch {}
@@ -300,8 +340,26 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
     if (rsvp && !isHttps(rsvp)) return result(box, "bad", "The RSVP link should start with https://");
     if (!mcp) return result(box, "bad", "Connectors aren't available here.", " Open this page on claude.ai.");
 
-    const btn = $("evSubmit"); btn.disabled = true; btn.textContent = "Adding…";
-    const description = [rsvp ? `RSVP: ${rsvp}` : null, desc || null, "All links: " + LINKTREE].filter(Boolean).join("\n\n");
+    const btn = $("evSubmit"); btn.disabled = true; btn.textContent = "Creating…";
+    const repeat = $("evRepeat").checked;
+    const weeks = repeat ? Math.min(20, Math.max(2, parseInt($("evWeeks").value, 10) || 10)) : 1;
+    let rsvpLink = rsvp;
+    if ($("evLuma").checked) {
+      let made = 0, firstUrl = null, lumaErr = null;
+      for (let i = 0; i < weeks; i++) {
+        try {
+          const res = await createLuma({ title, date: addDays(date, 7 * i), start, end, place, desc });
+          made++; if (!firstUrl) firstUrl = res.url;
+        } catch (err) { lumaErr = err; break; }
+      }
+      if (made) {
+        result(box, "ok", made === 1 ? "Luma RSVP page created." : `${made} weekly Luma RSVP pages created.`, firstUrl ? " " + firstUrl : "");
+        if (!rsvpLink) rsvpLink = weeks > 1 ? LUMA_PAGE : (firstUrl || LUMA_PAGE);
+        try { await mcp.invalidate("luma", "list_calendar_events"); } catch {}
+      }
+      if (lumaErr) result(box, "bad", made ? `Luma stopped after ${made} of ${weeks}.` : "The Luma event wasn't created.", " " + explain(lumaErr, "Luma") + (made ? "" : " The calendar event will still be added."));
+    }
+    const description = [rsvpLink ? `RSVP: ${rsvpLink}` : null, desc || null, "All links: " + LINKTREE].filter(Boolean).join("\n\n");
     const input = {
       calendarId: CAL,
       summary: title,
@@ -311,10 +369,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       location: place || undefined,
       description,
     };
-    if ($("evRepeat").checked) {
-      const n = Math.min(20, Math.max(2, parseInt($("evWeeks").value, 10) || 10));
-      input.recurrenceData = [`RRULE:FREQ=WEEKLY;COUNT=${n}`];
-    }
+    if (repeat) input.recurrenceData = [`RRULE:FREQ=WEEKLY;COUNT=${weeks}`];
     try {
       const r = await mcp.callTool("Google Calendar", "create_event", input);
       const link = r && r.payload && r.payload.htmlLink;
@@ -323,7 +378,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       try { await mcp.invalidate("Google Calendar", "list_events"); } catch {}
       if ($("evAnnounce").checked) {
         const when = new Date(`${date}T${start}:00`).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
-        const content = [`<@&${MEMBER_ROLE}> 📣 **${title}**`, `🗓 ${when} (Austin time)`, place ? `📍 ${place}` : null, desc || null, rsvp ? `👉 RSVP: <${rsvp}>` : `All links: <${LINKTREE}>`]
+        const content = [`<@&${MEMBER_ROLE}> 📣 **${title}**`, `🗓 ${when} (Austin time)`, place ? `📍 ${place}` : null, desc || null, rsvpLink ? `👉 RSVP: <${rsvpLink}>` : `All links: <${LINKTREE}>`]
           .filter(Boolean).join("\n");
         try { await discordPost(content, true); result(box, "ok", "Posted in Discord #announcements."); }
         catch (err) { result(box, "bad", "Discord announcement didn't go out.", " " + explain(err, "Zapier")); }
@@ -333,7 +388,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
     } catch (err) {
       result(box, "bad", "The event wasn't added.", " " + explain(err, "Google Calendar"));
     } finally {
-      btn.disabled = false; btn.textContent = "Add to calendar";
+      btn.disabled = false; btn.textContent = "Create event";
     }
   });
 
@@ -412,7 +467,62 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       card.append(date, info); list.appendChild(card);
     }
   }
+  let lumaWatch = null;
+  function renderLuma(payload) {
+    const list = $("lumaList"); list.textContent = "";
+    const entries = payload && Array.isArray(payload.entries) ? payload.entries : [];
+    const evs = entries.map((e) => (e && e.event) ? Object.assign({}, e, e.event) : e).filter((e) => e && e.platform !== "external");
+    if (!evs.length) {
+      const d = document.createElement("div"); d.className = "empty"; d.textContent = "No upcoming Luma events yet."; list.appendChild(d); return;
+    }
+    for (const ev of evs) {
+      const dt = ev.start_at ? new Date(ev.start_at) : null;
+      const card = document.createElement("article"); card.className = "ev";
+      const date = document.createElement("div"); date.className = "date";
+      const m = document.createElement("div"); m.className = "m"; m.textContent = dt ? dt.toLocaleString(undefined, { month: "short", timeZone: TZ }) : "";
+      const dd = document.createElement("div"); dd.className = "d"; dd.textContent = dt ? dt.toLocaleString(undefined, { day: "numeric", timeZone: TZ }) : "?";
+      date.append(m, dd);
+      const info = document.createElement("div"); info.style.minWidth = "0";
+      const h = document.createElement("h3"); h.textContent = ev.name || "(untitled)";
+      const p = document.createElement("p"); p.textContent = dt ? dt.toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit", timeZone: TZ }) : "";
+      info.append(h, p);
+      const row = document.createElement("p");
+      if (typeof ev.url === "string" && isHttps(ev.url)) {
+        const a = document.createElement("a"); a.href = ev.url; a.textContent = "Luma page"; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a);
+        row.appendChild(document.createTextNode(" · "));
+      }
+      const id = ev.api_id || ev.id;
+      if (id) {
+        const b = document.createElement("button"); b.className = "btn ghost"; b.style.padding = "4px 12px"; b.style.fontSize = "13px"; b.textContent = "RSVP count";
+        b.addEventListener("click", async () => {
+          b.disabled = true; b.textContent = "Counting…";
+          try {
+            const r = await mcp.callTool("luma", "get_event", { event_id: id });
+            const pl = r.payload || {}; const gc = (pl.event && pl.event.guest_counts) || pl.guest_counts || {};
+            const going = gc.approved ?? gc.going ?? null;
+            b.textContent = going != null ? `${going} going` + (gc.waitlist ? ` · ${gc.waitlist} waitlist` : "") : "Count unavailable";
+          } catch (err) { b.textContent = "Couldn't load"; b.title = explain(err, "Luma"); }
+          b.disabled = false;
+        });
+        row.appendChild(b);
+      }
+      info.appendChild(row);
+      card.append(date, info); list.appendChild(card);
+    }
+  }
+  function startLuma() {
+    if (lumaWatch || !mcp) return;
+    lumaWatch = mcp.watchTool("luma", "list_calendar_events", { calendar_id: LUMA_CAL, limit: 20 }, (evt) => {
+      if (evt.type === "data") renderLuma(evt.result.payload);
+      else {
+        $("lumaList").textContent = "";
+        const d = document.createElement("div"); d.className = "empty"; d.textContent = explain(evt.error, "Luma"); $("lumaList").appendChild(d);
+      }
+    }, { refetchInterval: 300000 });
+  }
+
   function startUpcoming() {
+    startLuma();
     if (unwatch || !mcp) {
       if (!mcp) { $("upList").textContent = ""; const d = document.createElement("div"); d.className = "empty"; d.textContent = "Connectors aren't available here. Open this page on claude.ai."; $("upList").appendChild(d); }
       return;

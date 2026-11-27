@@ -25,7 +25,7 @@ const CONFIG = {
   CLUB_NAME: 'UT International Pickleball Club (UTIP)',
   LINKS: {
     discord: 'https://discord.gg/uFwZuz9KA9',
-    luma: 'https://luma.com/REPLACE_ME',
+    luma: 'https://luma.com/utip',
     instagram: 'https://instagram.com/utip_austin',
   },
   // Discord webhook for a private #officer-log channel (optional). Never a public channel:

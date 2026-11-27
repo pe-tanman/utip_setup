@@ -14,7 +14,7 @@ _Last updated 2026-11-26. Theme: all yellow (`#FFD23F`) with deep-teal ink._
 | Event pipeline guide | how officers add events | docs/event-pipeline.md |
 | Canva | ✅ Folder with editable yellow-theme designs | https://www.canva.com/folder/FAHcDrfFYFM |
 | Linktree | ✅ linktr.ee/utip: yellow background, bio, member form / Discord / calendar / Instagram links + Instagram & Discord icons | https://linktr.ee/utip |
-| Luma | ⏳ to do: `docs/luma-setup.md` | |
+| Luma | ✅ Calendar "UTIP · UT International Pickleball Club" (cal-dmnwrdfkfGWq3pO), Austin, yellow tint, logo, linked from Linktree; Officer Console creates events here | https://luma.com/utip |
 | SMS (Twilio) | ⏳ to do: `docs/sms-setup.md` | |
 
 ## Discord layout (built through the Zapier Discord connection)

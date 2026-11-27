@@ -64,4 +64,4 @@ https://claude.ai/artifact/7PrWK5ZHz8zFaA3YdvQQuL (source: `site/officers/index.
 - **Upcoming:** live list from the UTIP calendar.
 - It runs on claude.ai with the viewer's own connectors (Google Calendar, Zapier, Buffer). Another officer needs
   the page shared with them and those connectors connected to the club accounts in their claude.ai.
-- Luma is shown as "not connected" until a Luma connector is added.
+- **Luma** (connector `luma`): "Create event" also makes the Luma RSVP page (one per week for repeats) and puts its link first in the calendar description, so Discord posts and Instagram story stickers point to it. The Upcoming tab lists Luma events with an RSVP-count button.
