@@ -53,3 +53,12 @@ python3 design/make_qr.py     # after changing links in design/data/club.json
 node design/render.js         # re-renders everything into exports/
 ```
 Prefer Canva? Upload the PNGs or `brand/logo.svg` to Canva and use the palette in `brand/brand.md`.
+
+## Link rule (every post and story)
+Instagram makes no link in a feed caption clickable, so:
+- **Feed posts:** the last slide and the caption both say **linktr.ee/utip**, and the caption says "(link in bio)".
+  The bio link is the Linktree.
+- **Stories:** always attach a **link sticker**. When scheduling in Buffer, set the story's link field
+  (Buffer adds the sticker). Club or join stories link to `https://linktr.ee/utip`; event stories link to the event's RSVP page.
+  The dashed box on our story templates shows where the sticker goes, with the URL printed under it as a fallback.
+- After a story publishes, open it once on your phone and check that the sticker is there and opens the right page.
