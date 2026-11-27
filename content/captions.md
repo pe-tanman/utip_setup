@@ -20,7 +20,7 @@ with ··· → **Pin to your profile**. Pin the officer and get-on-board posts 
 > 🌱 Never played? Perfect. Beginners are very welcome.
 > 🤝 Domestic students: you're SO welcome. We're the "International" Pickleball Club because our founders are international students, not because it's only for us. If you want friends from around the world and love learning new cultures, this is your club.
 >
-> Join in 3 steps (links in bio):
+> Join in 3 steps. Everything is at 👉 linktr.ee/utip (link in bio):
 > 1️⃣ Fill out the member form
 > 2️⃣ Join our Discord
 > 3️⃣ RSVP on Luma for this week
@@ -56,7 +56,7 @@ Fill in `design/data/officers.json` (+ photos in `design/data/photos/`) and re-r
 > 4. RSVP on Luma for every session and social
 > 5. Show up and play!
 >
-> All links in bio. Questions? DM us 💬
+> 👉 linktr.ee/utip (link in bio). Questions? DM us 💬
 >
 > #UTAustin #UTIP #pickleball #internationalstudents
 

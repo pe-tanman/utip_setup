@@ -43,7 +43,7 @@ def caption(ev, lab, handle):
             f"\U0001F4C5 {lab['date_label']} · {lab['time_label']}\n"
             f"\U0001F4CD {ev['location']}\n\n"
             f"{ev.get('blurb', '').strip()}\n\n"
-            f"RSVP on Luma — link in bio & in our story! International and domestic students all welcome. "
+            f"👉 RSVP: tap the link in our story, or go to linktr.ee/utip (link in bio). International and domestic students all welcome. "
             f"No experience needed.\n\n{tags}")
 
 
