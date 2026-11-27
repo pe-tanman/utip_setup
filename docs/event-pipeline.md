@@ -11,14 +11,14 @@ Officers only ever do step 1.
         │       posts title, time (shown in each viewer's timezone), place, details,
         │       RSVP link, "react ✅ if you're coming", add-to-calendar link; pings @Member
         │
-        ├──▶ (within minutes) Instagram story "New event just dropped!"               ⏳ needs Buffer in Zapier
-        │       story-event-generic-01.png + link sticker → the RSVP link
+        ├──▶ (same run) Instagram story "New event just dropped!" via Buffer API         ✅ live
+        │       story-event-generic-01.png + link sticker → RSVP link (or linktr.ee/utip)
         │
         ├──▶ (24 h before) Zapier "Event reminder 24h before → Discord"               ✅ live
         │       "Tomorrow: <title>" + time, place, RSVP link; pings @Member
         │
-        └──▶ (24 h before) Instagram story "See you tomorrow!"                        ⏳ needs Buffer in Zapier
-                story-event-generic-02.png + link sticker → the RSVP link
+        └──▶ (same run) Instagram story "See you tomorrow!" via Buffer API               ✅ live
+                story-event-generic-02.png + link sticker → RSVP link (or linktr.ee/utip)
 ```
 
 Students see the event three more ways with no extra work: the calendar link on linktr.ee/utip,
@@ -49,3 +49,9 @@ yourself, with a link sticker on the story.
 | Form sign-up → Discord Member role | https://zapier.com/workflow/01a218f6-2cca-7a8c-9b6e-aec1e73c2163 |
 | New calendar event → Discord #events | https://zapier.com/workflow/01a21a37-f799-7e23-8603-da1e488892ac |
 | Event reminder 24h before → Discord | https://zapier.com/workflow/01a21a5c-e7ce-7e03-8ca9-4f305d175957 |
+
+## Notes
+- Stories are created through Buffer's GraphQL API (Zapier's built-in Buffer action has no link-sticker field),
+  using the Buffer account connected in Zapier. Buffer free plan: max 10 scheduled posts at once.
+- If a story step fails (e.g. Buffer disconnected), the Discord post still goes out and the Zapier run shows the error.
+- Check the first automatic story on your phone to confirm the link sticker appears.
