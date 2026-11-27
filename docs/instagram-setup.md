@@ -26,9 +26,9 @@
 ## 2. Launch sequence
 | Day | Post | File |
 |-----|------|------|
-| 1 | Welcome / why we started (carousel) | `exports/instagram/post1-welcome/` |
+| 1 | Welcome / why we started (carousel) | Canva `DAHcD5t_mRA` → `exports/instagram/canva/welcome/` (scheduled in Buffer) |
 | 1 | Story: "New club alert" + link sticker → form | `exports/instagram/stories/story-join.png` |
-| 2 | Get on board (carousel) | `exports/instagram/post3-get-on-board/` |
+| 2 | Get on board (carousel) | Canva `DAHcDoxCKtA` → `exports/instagram/canva/get-on-board/` (scheduled in Buffer) |
 | 3 | Meet the officers (carousel) | `exports/instagram/post2-officers/` |
 | 4+ | First event post + story with Luma link | made by `pipeline/announce.py` |
 
@@ -62,3 +62,12 @@ Instagram makes no link in a feed caption clickable, so:
   (Buffer adds the sticker). Club or join stories link to `https://linktr.ee/utip`; event stories link to the event's RSVP page.
   The dashed box on our story templates shows where the sticker goes, with the URL printed under it as a fallback.
 - After a story publishes, open it once on your phone and check that the sticker is there and opens the right page.
+
+## Updating a scheduled post after editing it in Canva
+Canva download links expire within hours, so scheduled posts point at copies saved in this repo.
+1. Export the Canva design as PNG (all pages).
+2. Save the pages in `exports/instagram/canva/<post>/01.png …`, padded to 1080×1350. Canva's 3:4 pages
+   are narrower than Instagram's 4:5 limit, so extend the side edges by 33 px each. If Canva returned the
+   pages in reverse order (it sometimes does), number them by the real slide order.
+3. Commit and push, then point the Buffer post's images at
+   `https://raw.githubusercontent.com/pe-tanman/utip_setup/<commit>/exports/instagram/canva/<post>/NN.png`.
