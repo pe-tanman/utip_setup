@@ -87,7 +87,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
 <header class="hero">
   <div class="wrap">
     <h1>UTIP Officer Console</h1>
-    <p>Add events and send announcements. One event creates the Luma RSVP page and the calendar entry, then Discord #events, an Instagram story with the RSVP link, and a 24-hour reminder follow automatically.</p>
+    <p>Add events and send announcements. One event creates the Luma RSVP page and the calendar entry, then Discord #events, an Instagram post, an Instagram story with the RSVP link, and a 24-hour reminder follow automatically.</p>
     <div class="status" id="status" aria-live="polite">
       <span class="chip" data-server="Google Calendar"><span class="dot"></span>Google Calendar</span>
       <span class="chip" data-server="Zapier"><span class="dot"></span>Discord (via Zapier)</span>
@@ -107,7 +107,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
   <!-- NEW EVENT -->
   <section class="panel" id="p-event" role="tabpanel" aria-labelledby="tab-event">
     <h2>Add an event</h2>
-    <p class="lede">Creates the Luma RSVP page and adds the event to the public UTIP calendar. The Discord post, Instagram story and 24-hour reminder follow automatically.</p>
+    <p class="lede">Creates the Luma RSVP page and adds the event to the public UTIP calendar. The Discord post, Instagram post + story and 24-hour reminder follow automatically.</p>
     <form id="eventForm" novalidate>
       <label>Title <input id="evTitle" required maxlength="90" placeholder="Weekly Open Play"></label>
       <div class="row">
@@ -374,7 +374,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       const r = await mcp.callTool("Google Calendar", "create_event", input);
       const link = r && r.payload && r.payload.htmlLink;
       result(box, "ok", "Added to the UTIP calendar.", link ? " Open it in Google Calendar to double-check." : "");
-      result(box, "info", "Discord #events post and Instagram story are on their way.", " Zapier checks the calendar every few minutes. The reminder goes out 24 hours before.");
+      result(box, "info", "Discord #events post, Instagram post and Instagram story are on their way.", " Zapier checks the calendar every few minutes. The reminder goes out 24 hours before.");
       try { await mcp.invalidate("Google Calendar", "list_events"); } catch {}
       if ($("evAnnounce").checked) {
         const when = new Date(`${date}T${start}:00`).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
