@@ -11,10 +11,16 @@ Officers only ever do step 1.
         │       posts title, time (shown in each viewer's timezone), place, details,
         │       RSVP link, "react ✅ if you're coming", add-to-calendar link; pings @Member
         │
-        ├──▶ (same run) Instagram FEED POST "New event!" via Buffer API                  ✅ live
-        │       post-event-generic.png; caption = title, Austin date/time, place, details, RSVP link
-        ├──▶ (same run) Instagram story "New event just dropped!" via Buffer API         ✅ live
-        │       story-event-generic-01.png + link sticker → RSVP link (or linktr.ee/utip)
+        ├──▶ Events made in the OFFICER CONSOLE (Canva box ticked):                      ✅ live
+        │       Canva designs a NEW post for this event (rotating art style, yellow/teal, logo)
+        │       → officer previews → "Post to Instagram" → feed post (caption with details)
+        │       + story with the same design and a link sticker → RSVP link
+        │       (the calendar description gets "Instagram: Canva post from the Officer Console",
+        │        which tells Zapier to skip the generic graphics below)
+        │
+        ├──▶ Events added straight in Google Calendar (fallback, same Zapier run):        ✅ live
+        │       Instagram FEED POST "New event!": post-event-generic.png, caption with details
+        │       Instagram story: story-event-generic-01.png + link sticker → RSVP link (or linktr.ee/utip)
         │
         ├──▶ (24 h before) Zapier "Event reminder 24h before → Discord"               ✅ live
         │       "Tomorrow: <title>" + time, place, RSVP link; pings @Member
@@ -61,9 +67,16 @@ yourself, with a link sticker on the story.
 ## Officer Console (web page)
 https://claude.ai/artifact/7PrWK5ZHz8zFaA3YdvQQuL (source: `site/officers/index.html`)
 - **New event:** creates the event on the UTIP Google Calendar (optional weekly repeat), which triggers
-  the Discord post, Instagram story and 24 h reminder above. Optional extra post in Discord #announcements.
+  the Discord post and 24 h reminder above. Optional extra post in Discord #announcements.
+- **Canva post per event** (connector `Canva`, box ticked by default): after the event is saved, Canva generates a
+  fresh square Instagram design (one of 10 art styles, never the same twice in a row, UTIP logo asset `MAHcD0fkfWo`).
+  The officer sees the preview and an editable caption, then presses **Post to Instagram (post + story)**:
+  Buffer publishes the feed post now and a story using the same design with a link sticker to the RSVP link.
+  **Try another design** asks Canva for a new one; **Edit in Canva** opens it for touch-ups (then post from Buffer).
+  If Canva adds a blank page, pick the right page in the preview. Canva export links expire after a few hours,
+  so post from the preview the same day.
 - **Announcement:** Discord #announcements (via Zapier) and/or an Instagram story with a link sticker (via Buffer), now or scheduled.
 - **Upcoming:** live list from the UTIP calendar.
-- It runs on claude.ai with the viewer's own connectors (Google Calendar, Zapier, Buffer). Another officer needs
+- It runs on claude.ai with the viewer's own connectors (Google Calendar, Zapier, Buffer, luma, Canva). Another officer needs
   the page shared with them and those connectors connected to the club accounts in their claude.ai.
 - **Luma** (connector `luma`): "Create event" also makes the Luma RSVP page (one per week for repeats) and puts its link first in the calendar description, so Discord posts and Instagram story stickers point to it. The Upcoming tab lists Luma events with an RSVP-count button.

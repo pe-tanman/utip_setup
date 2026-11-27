@@ -81,18 +81,30 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
 .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .links a { color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; text-decoration: none; }
 .note { font-size: 13px; color: var(--muted); }
+.studio { margin-top: 16px; border: 1.5px solid var(--line); border-radius: 14px; padding: 14px; background: var(--field); display: grid; gap: 12px; }
+.studio h3 { margin: 0; font: 800 18px var(--display); }
+.studio .meta { color: var(--muted); font-size: 14px; margin: 0; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.shot { appearance: none; border: 3px solid transparent; border-radius: 12px; padding: 0; background: var(--surface); cursor: pointer; overflow: hidden; display: grid; min-height: 120px; place-items: center; color: var(--ink); font: 600 14px var(--body); }
+.shot[aria-pressed="true"] { border-color: var(--teal); }
+.shot img { width: 100%; height: auto; display: block; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.studio a { color: var(--ink); font-weight: 600; }
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--teal); border-radius: 50%; vertical-align: -2px; margin-right: 6px; }
+@media (prefers-reduced-motion: no-preference) { .spin { animation: rot .8s linear infinite; } @keyframes rot { to { transform: rotate(360deg); } } }
 @media (prefers-reduced-motion: no-preference) { .res { animation: in .25s ease-out; } @keyframes in { from { opacity: 0; transform: translateY(4px); } } }
 </style>
 
 <header class="hero">
   <div class="wrap">
     <h1>UTIP Officer Console</h1>
-    <p>Add events and send announcements. One event creates the Luma RSVP page and the calendar entry, then Discord #events, an Instagram post, an Instagram story with the RSVP link, and a 24-hour reminder follow automatically.</p>
+    <p>Add events and send announcements. One event creates the Luma RSVP page and the calendar entry, designs a fresh Instagram post in Canva for you to approve (posted with a matching story and RSVP link sticker), and Discord #events plus a 24-hour reminder follow automatically.</p>
     <div class="status" id="status" aria-live="polite">
       <span class="chip" data-server="Google Calendar"><span class="dot"></span>Google Calendar</span>
       <span class="chip" data-server="Zapier"><span class="dot"></span>Discord (via Zapier)</span>
       <span class="chip" data-server="Buffer"><span class="dot"></span>Instagram (via Buffer)</span>
       <span class="chip" data-server="luma"><span class="dot"></span>Luma RSVPs</span>
+      <span class="chip" data-server="Canva"><span class="dot"></span>Canva designs</span>
     </div>
   </div>
 </header>
@@ -135,11 +147,13 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
         <legend>Options</legend>
         <label class="check"><input type="checkbox" id="evRepeat"> <span>Repeats weekly for <input id="evWeeks" type="number" min="2" max="20" value="10" style="width:5.5em;display:inline-block;padding:4px 8px"> weeks</span></label>
         <label class="check"><input type="checkbox" id="evAnnounce"> <span>Also post a separate announcement in Discord <b>#announcements</b> (pings @Member)</span></label>
+        <label class="check"><input type="checkbox" id="evCanva" checked> <span>Design a <b>new Instagram post in Canva</b> (a different style every time). You preview it, then it goes out as a feed post plus a story with an RSVP link sticker.</span></label>
         <label class="check"><input type="checkbox" id="evLuma" checked> <span>Create the RSVP page on <b>Luma</b> (luma.com/utip). Weekly repeats get one Luma event per week.</span></label>
       </fieldset>
       <button class="btn" id="evSubmit" type="submit">Create event</button>
     </form>
     <div class="results" id="evResults" aria-live="polite"></div>
+    <div class="studio" id="evStudio" hidden></div>
   </section>
 
   <!-- ANNOUNCEMENT -->
@@ -208,6 +222,21 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
     tomorrow: "https://raw.githubusercontent.com/pe-tanman/utip_setup/7384870aa067a78cd528420666d29247a59c3aa1/exports/instagram/stories/story-event-generic-02.png",
     join: "https://raw.githubusercontent.com/pe-tanman/utip_setup/09bf99561f7713340c429360cde016eb036f9391/exports/instagram/stories/story-join.png",
   };
+  const CANVA_LOGO_ASSET = "MAHcD0fkfWo"; // yellow UTIP logo uploaded to Canva
+  const CANVA_MARKER_LINE = "Instagram: Canva post from the Officer Console";
+  const HASHTAGS = "#UTAustin #UTIP #pickleball #internationalstudents #hookem #utaustinstudents #austinpickleball";
+  const STYLES = [
+    "bold retro sports poster with halftone dots and chunky condensed type",
+    "playful paper-cutout collage with torn edges and a cut-out pickleball paddle",
+    "minimal Swiss-style typographic layout where the date is huge",
+    "sunny Austin skyline illustration with the UT Tower in the background",
+    "celebration of many cultures: flag bunting and confetti across the top",
+    "hand-drawn doodle sketchbook style with arrows and scribbled stars",
+    "bold geometric pattern made of pickleball court lines",
+    "vintage passport-stamp and boarding-pass style (we're an international club)",
+    "1970s groovy sunset with wavy stripes",
+    "risograph print look with grain and slightly offset color layers",
+  ];
   const $ = (id) => document.getElementById(id);
   let mcp = null;
 
@@ -359,7 +388,8 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       }
       if (lumaErr) result(box, "bad", made ? `Luma stopped after ${made} of ${weeks}.` : "The Luma event wasn't created.", " " + explain(lumaErr, "Luma") + (made ? "" : " The calendar event will still be added."));
     }
-    const description = [rsvpLink ? `RSVP: ${rsvpLink}` : null, desc || null, "All links: " + LINKTREE].filter(Boolean).join("\n\n");
+    const useCanva = $("evCanva").checked;
+    const description = [rsvpLink ? `RSVP: ${rsvpLink}` : null, desc || null, "All links: " + LINKTREE, useCanva ? CANVA_MARKER_LINE : null].filter(Boolean).join("\n\n");
     const input = {
       calendarId: CAL,
       summary: title,
@@ -374,7 +404,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       const r = await mcp.callTool("Google Calendar", "create_event", input);
       const link = r && r.payload && r.payload.htmlLink;
       result(box, "ok", "Added to the UTIP calendar.", link ? " Open it in Google Calendar to double-check." : "");
-      result(box, "info", "Discord #events post, Instagram post and Instagram story are on their way.", " Zapier checks the calendar every few minutes. The reminder goes out 24 hours before.");
+      result(box, "info", useCanva ? "Discord #events post is on its way." : "Discord #events post, Instagram post and Instagram story are on their way.", " Zapier checks the calendar every few minutes. The reminder goes out 24 hours before.");
       try { await mcp.invalidate("Google Calendar", "list_events"); } catch {}
       if ($("evAnnounce").checked) {
         const when = new Date(`${date}T${start}:00`).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
@@ -383,6 +413,7 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
         try { await discordPost(content, true); result(box, "ok", "Posted in Discord #announcements."); }
         catch (err) { result(box, "bad", "Discord announcement didn't go out.", " " + explain(err, "Zapier")); }
       }
+      if (useCanva) startStudio({ title, date, start, end, place, desc, link: rsvpLink || LINKTREE, weeks });
       $("eventForm").reset();
       $("evOtherWrap").hidden = true;
     } catch (err) {
@@ -391,6 +422,173 @@ legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-sp
       btn.disabled = false; btn.textContent = "Create event";
     }
   });
+
+  // ---------- CANVA STUDIO: fresh design per event → preview → Instagram post + story ----------
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function pickStyle() {
+    let last = -1;
+    try { last = parseInt(localStorage.getItem("utip-last-style") || "-1", 10); } catch {}
+    let i = Math.floor(Math.random() * STYLES.length);
+    if (i === last) i = (i + 1) % STYLES.length;
+    try { localStorage.setItem("utip-last-style", String(i)); } catch {}
+    return STYLES[i];
+  }
+  function niceWhen(ev) {
+    try {
+      const d = new Date(`${ev.date}T12:00:00Z`);
+      const day = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" }).format(d);
+      const t = (hm) => { const [h, m] = hm.split(":").map(Number); return `${((h + 11) % 12) + 1}${m ? ":" + String(m).padStart(2, "0") : ""}${h < 12 ? "am" : "pm"}`; };
+      return `${ev.weeks > 1 ? "Every " + day.split(",")[0] + " from " + day.split(", ")[1] : day} · ${t(ev.start)}–${t(ev.end)}`;
+    } catch { return ev.date; }
+  }
+  function buildBrief(ev, style) {
+    return [
+      "Square Instagram post announcing an event for UTIP (UT International Pickleball Club), a social pickleball club at UT Austin founded by international students and open to everyone.",
+      `Visual style: ${style}. Make it feel artistic, fun and different from a generic template.`,
+      "Colours: sunshine yellow #FFD23F as the main colour, deep teal #0F4C5C for text and accents, cream #FFFBEA. Use the UTIP logo from the reference image.",
+      "Use exactly this text and nothing else:",
+      `Headline: "${ev.title}"`,
+      `When: "${niceWhen(ev)}"`,
+      ev.place ? `Where: "${ev.place}"` : null,
+      `Small line: "All levels · Everyone welcome"`,
+      `Call to action: "RSVP: link in bio"`,
+      `Handle: "@utip_austin"`,
+      "Text must be large and readable on a phone. No QR codes, no prices, no extra dates.",
+    ].filter(Boolean).join("\n");
+  }
+  function captionFor(ev) {
+    return [
+      `🏓 ${ev.title}`,
+      "",
+      `📅 ${niceWhen(ev)} (Austin time)`,
+      ev.place ? `📍 ${ev.place}` : null,
+      ev.desc ? `\n${ev.desc}` : null,
+      "",
+      `👉 RSVP: ${ev.link.replace(/^https?:\/\//, "")} (link in bio + in our story)`,
+      "International and domestic students, all levels welcome. Bring a friend!",
+      "",
+      HASHTAGS,
+    ].filter((l) => l !== null).join("\n").slice(0, 2100);
+  }
+  function el(tag, props, ...kids) {
+    const n = document.createElement(tag);
+    Object.assign(n, props || {});
+    for (const k of kids) if (k != null) n.append(k);
+    return n;
+  }
+
+  let studioRun = 0;
+  async function startStudio(ev) {
+    const run = ++studioRun;
+    const box = $("evStudio");
+    box.hidden = false; box.textContent = "";
+    const style = pickStyle();
+    const status = el("p", { className: "meta" });
+    const setStatus = (msg, spinning) => { status.textContent = ""; if (spinning) status.append(el("span", { className: "spin", ariaHidden: "true" })); status.append(msg); };
+    box.append(el("h3", { textContent: "Instagram design for “" + ev.title + "”" }), el("p", { className: "meta", textContent: "Style this time: " + style }), status);
+    setStatus("Canva is designing… this usually takes 30–90 seconds.", true);
+
+    try {
+      const start = await mcp.callTool("Canva", "create-design", {
+        brief: buildBrief(ev, style),
+        format: "Instagram Post (Square)",
+        references: [CANVA_LOGO_ASSET],
+        user_intent: "UTIP officer: new Instagram post for an event",
+      });
+      let p = start.payload || {};
+      const jobId = p.job_id;
+      let token = p.continuation_token;
+      if (!jobId) throw { code: "tool_error", message: "Canva didn't start a design job." };
+      let design = p.design || null;
+      const until = Date.now() + 5 * 60 * 1000;
+      while (!design) {
+        if (run !== studioRun) return;
+        if (Date.now() > until) throw { code: "tool_error", message: "Canva took longer than 5 minutes. Check your Canva account for the design." };
+        const wait = Math.min(20, Math.max(3, Number(p.polling_policy && p.polling_policy.wait_seconds) || 6));
+        await sleep(wait * 1000);
+        const r = await mcp.callTool("Canva", "get-create-design-async-job", { job_id: jobId, continuation_token: token, user_intent: "UTIP officer: wait for event design" });
+        p = r.payload || {};
+        if (p.continuation_token) token = p.continuation_token;
+        if (p.status === "failed" || p.error) throw { code: "tool_error", message: (p.error && (p.error.message || p.error)) || "Canva couldn't make this design." };
+        if (p.status === "completed" && p.design) design = p.design;
+      }
+      if (run !== studioRun) return;
+      setStatus("Exporting the image…", true);
+
+      let urls = [];
+      for (let i = 0; i < 4 && !urls.length; i++) {
+        const r = await mcp.callTool("Canva", "export-design", { design_id: design.id, format: { type: "png" }, user_intent: "UTIP officer: export event post for Instagram" });
+        const job = (r.payload && r.payload.job) || r.payload || {};
+        urls = Array.isArray(job.urls) ? job.urls.filter((u) => /^https:\/\//.test(u)) : [];
+        if (!urls.length) await sleep(4000);
+      }
+      if (!urls.length) throw { code: "tool_error", message: "Canva made the design but the export didn't return an image." };
+      if (run !== studioRun) return;
+      showPreview(box, status, ev, design, urls);
+    } catch (err) {
+      if (run !== studioRun) return;
+      setStatus("");
+      result(box, "bad", "The Canva design didn't finish.", " " + explain(err, "Canva") + " The Instagram post wasn't sent; press Try another design or post from Buffer.");
+      box.append(retryRow(ev));
+    }
+  }
+
+  function retryRow(ev) {
+    const again = el("button", { type: "button", className: "btn ghost", textContent: "Try another design" });
+    again.addEventListener("click", () => startStudio(ev));
+    return el("div", { className: "btnrow" }, again);
+  }
+
+  function showPreview(box, status, ev, design, urls) {
+    status.textContent = urls.length > 1 ? "Pick the page to post (Canva sometimes adds a blank page)." : "Here's the design. Post it, or ask for a different one.";
+    let chosen = urls[0];
+    const shots = el("div", { className: "shots" });
+    urls.forEach((u, i) => {
+      const b = el("button", { type: "button", className: "shot" });
+      b.setAttribute("aria-pressed", String(i === 0));
+      b.setAttribute("aria-label", `Page ${i + 1}`);
+      const img = el("img", { src: u, alt: `Canva design page ${i + 1}`, loading: "lazy" });
+      img.addEventListener("error", () => { b.textContent = `Page ${i + 1} (preview blocked; open in Canva to check)`; });
+      b.append(img);
+      b.addEventListener("click", () => { chosen = u; shots.querySelectorAll(".shot").forEach((s) => s.setAttribute("aria-pressed", String(s === b))); });
+      shots.append(b);
+    });
+    const caption = el("textarea", { id: "evCaption", value: captionFor(ev), maxLength: 2100 });
+    caption.style.minHeight = "150px";
+    const capLabel = el("label", {}, "Caption", caption);
+    const post = el("button", { type: "button", className: "btn", textContent: "Post to Instagram (post + story)" });
+    const again = el("button", { type: "button", className: "btn ghost", textContent: "Try another design" });
+    const open = el("a", { href: design.url || design.edit_url || "https://www.canva.com", target: "_blank", rel: "noopener", textContent: "Edit in Canva" });
+    const out = el("div", { className: "results" });
+    again.addEventListener("click", () => startStudio(ev));
+    post.addEventListener("click", async () => {
+      post.disabled = true; again.disabled = true; post.textContent = "Posting…";
+      out.textContent = "";
+      const alt = `${ev.title}: ${niceWhen(ev)}${ev.place ? " at " + ev.place : ""}. UTIP event poster.`;
+      let feedOk = false;
+      try {
+        await mcp.callTool("Buffer", "create_post", {
+          channelId: IG_CHANNEL, schedulingType: "automatic", mode: "shareNow",
+          text: caption.value.trim() || captionFor(ev),
+          assets: [{ image: { url: chosen, metadata: { altText: alt } } }],
+          metadata: { instagram: { type: "post", shouldShareToFeed: true } },
+        });
+        feedOk = true;
+        result(out, "ok", "Instagram post sent to Buffer to publish now.");
+      } catch (err) { result(out, "bad", "The Instagram post wasn't created.", " " + explain(err, "Buffer")); }
+      try {
+        await mcp.callTool("Buffer", "create_post", {
+          channelId: IG_CHANNEL, schedulingType: "automatic", mode: "shareNow",
+          assets: [{ image: { url: chosen, metadata: { altText: alt + " Tap the link to RSVP." } } }],
+          metadata: { instagram: { type: "story", shouldShareToFeed: false, link: ev.link } },
+        });
+        result(out, "ok", "Story sent with a link sticker.", " " + ev.link);
+      } catch (err) { result(out, "bad", "The story wasn't created.", " " + explain(err, "Buffer")); }
+      post.textContent = feedOk ? "Posted" : "Post to Instagram (post + story)";
+      post.disabled = feedOk; again.disabled = false;
+    });
+    box.append(shots, capLabel, el("div", { className: "btnrow" }, post, again, open), out);
+  }
 
   // ---------- ANNOUNCEMENT ----------
   $("annStory").addEventListener("change", () => { $("annStoryOpts").hidden = !$("annStory").checked; });
