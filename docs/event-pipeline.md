@@ -55,3 +55,13 @@ yourself, with a link sticker on the story.
   using the Buffer account connected in Zapier. Buffer free plan: max 10 scheduled posts at once.
 - If a story step fails (e.g. Buffer disconnected), the Discord post still goes out and the Zapier run shows the error.
 - Check the first automatic story on your phone to confirm the link sticker appears.
+
+## Officer Console (web page)
+https://claude.ai/artifact/7PrWK5ZHz8zFaA3YdvQQuL (source: `site/officers/index.html`)
+- **New event:** creates the event on the UTIP Google Calendar (optional weekly repeat), which triggers
+  the Discord post, Instagram story and 24 h reminder above. Optional extra post in Discord #announcements.
+- **Announcement:** Discord #announcements (via Zapier) and/or an Instagram story with a link sticker (via Buffer), now or scheduled.
+- **Upcoming:** live list from the UTIP calendar.
+- It runs on claude.ai with the viewer's own connectors (Google Calendar, Zapier, Buffer). Another officer needs
+  the page shared with them and those connectors connected to the club accounts in their claude.ai.
+- Luma is shown as "not connected" until a Luma connector is added.

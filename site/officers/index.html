@@ -1,0 +1,453 @@
+<title>UTIP Officer Console</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one narrow column — status strip, then three tabs (New event · Announcement · Upcoming). Club yellow with teal ink. */
+:root {
+  --bg: #FFF6CF;
+  --surface: #FFFFFF;
+  --band: #FFD23F;
+  --ink: #102A31;
+  --muted: #4F6266;
+  --line: #EADFA8;
+  --teal: #0F4C5C;
+  --on-teal: #FFD23F;
+  --field: #FFFDF4;
+  --ok: #1F7A4D; --ok-bg: #E2F4E9;
+  --warn: #8A5A00; --warn-bg: #FCEFC9;
+  --bad: #A3261F; --bad-bg: #FBE3E1;
+  --display: "Bricolage Grotesque", Inter, system-ui, sans-serif;
+  --body: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11201F; --surface: #182C2E; --band: #E9BE2C; --ink: #F3ECD6; --muted: #A9BAB8; --line: #2B4144;
+  --teal: #FFD23F; --on-teal: #102A31; --field: #13262A;
+  --ok: #7CD9A7; --ok-bg: #173527; --warn: #F2C66B; --warn-bg: #3A2F14; --bad: #FF9C92; --bad-bg: #3D1B19; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11201F; --surface: #182C2E; --band: #E9BE2C; --ink: #F3ECD6; --muted: #A9BAB8; --line: #2B4144;
+  --teal: #FFD23F; --on-teal: #102A31; --field: #13262A;
+  --ok: #7CD9A7; --ok-bg: #173527; --warn: #F2C66B; --warn-bg: #3A2F14; --bad: #FF9C92; --bad-bg: #3D1B19; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body); }
+.hero { background: var(--band); color: #102A31; margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 28px); padding-bottom: 22px; }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.hero h1 { font: 800 clamp(26px, 5vw, 36px)/1.05 var(--display); margin: 0 0 6px; text-wrap: balance; }
+.hero p { margin: 0; max-width: 60ch; }
+.status { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(16,42,49,.1); font-size: 13px; font-weight: 600; color: #102A31; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #8a8a8a; }
+.dot.ok { background: #1F7A4D; } .dot.warn { background: #B7791F; } .dot.bad { background: #C0392B; }
+
+main.wrap { padding-block: 20px 60px; }
+.tabs { display: flex; gap: 6px; border-bottom: 2px solid var(--line); margin-bottom: 18px; overflow-x: auto; }
+.tab { appearance: none; border: 0; background: none; color: var(--muted); font: 700 15px var(--body); padding: 10px 12px; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--teal); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.panel h2 { font: 800 22px var(--display); margin: 0 0 4px; }
+.panel .lede { color: var(--muted); margin: 0 0 16px; }
+form { display: grid; gap: 14px; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+label { display: grid; gap: 5px; font-weight: 600; font-size: 14px; min-width: 0; }
+label small { font-weight: 400; color: var(--muted); }
+input, select, textarea { font: 15px var(--body); color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; min-width: 0; }
+textarea { min-height: 84px; resize: vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, .tab:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; }
+fieldset { border: 1.5px dashed var(--line); border-radius: 12px; padding: 10px 12px 12px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 4px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; }
+.check input { width: 18px; height: 18px; margin-top: 2px; flex: none; accent-color: var(--teal); }
+.check.disabled { opacity: .55; }
+.btn { appearance: none; border: 0; border-radius: 999px; background: var(--teal); color: var(--on-teal); font: 700 15px var(--body); padding: 12px 20px; cursor: pointer; justify-self: start; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.results { display: grid; gap: 8px; margin-top: 14px; }
+.res { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; font-size: 14px; }
+.res b { display: block; }
+.res.ok { background: var(--ok-bg); color: var(--ok); }
+.res.info { background: var(--warn-bg); color: var(--warn); }
+.res.bad { background: var(--bad-bg); color: var(--bad); }
+.res span { color: var(--ink); }
+.list { display: grid; gap: 10px; }
+.ev { display: grid; grid-template-columns: 74px 1fr; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--field); min-width: 0; }
+.date { background: var(--band); color: #102A31; border-radius: 10px; text-align: center; padding: 6px 4px; font-variant-numeric: tabular-nums; align-self: start; }
+.date .m { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.date .d { font: 800 26px/1 var(--display); }
+.ev h3 { margin: 0 0 2px; font-size: 16px; overflow-wrap: anywhere; }
+.ev p { margin: 0; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.ev a { color: var(--ink); font-weight: 600; }
+.empty { color: var(--muted); padding: 14px; border: 1.5px dashed var(--line); border-radius: 12px; text-align: center; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.links a { color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; text-decoration: none; }
+.note { font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .res { animation: in .25s ease-out; } @keyframes in { from { opacity: 0; transform: translateY(4px); } } }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>UTIP Officer Console</h1>
+    <p>Add events and send announcements. A calendar event also posts to Discord #events, puts up an Instagram story with an RSVP link, and sends a reminder 24 hours before.</p>
+    <div class="status" id="status" aria-live="polite">
+      <span class="chip" data-server="Google Calendar"><span class="dot"></span>Google Calendar</span>
+      <span class="chip" data-server="Zapier"><span class="dot"></span>Discord (via Zapier)</span>
+      <span class="chip" data-server="Buffer"><span class="dot"></span>Instagram (via Buffer)</span>
+      <span class="chip"><span class="dot warn"></span>Luma: not connected</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-event" aria-controls="p-event" aria-selected="true">New event</button>
+    <button class="tab" role="tab" id="tab-ann" aria-controls="p-ann" aria-selected="false">Announcement</button>
+    <button class="tab" role="tab" id="tab-up" aria-controls="p-up" aria-selected="false">Upcoming</button>
+  </div>
+
+  <!-- NEW EVENT -->
+  <section class="panel" id="p-event" role="tabpanel" aria-labelledby="tab-event">
+    <h2>Add an event</h2>
+    <p class="lede">Adds it to the public UTIP calendar. The Discord post, Instagram story and 24-hour reminder follow automatically.</p>
+    <form id="eventForm" novalidate>
+      <label>Title <input id="evTitle" required maxlength="90" placeholder="Weekly Open Play"></label>
+      <div class="row">
+        <label>Date <input id="evDate" type="date" required></label>
+        <label>Starts <input id="evStart" type="time" required value="10:00"></label>
+        <label>Ends <input id="evEnd" type="time" required value="12:00"></label>
+      </div>
+      <div class="row">
+        <label>Location
+          <select id="evPlace">
+            <option>Whitaker Courts</option>
+            <option>CCF</option>
+            <option value="__other">Other…</option>
+          </select>
+        </label>
+        <label id="evOtherWrap" hidden>Other location <input id="evOther" maxlength="120" placeholder="Address or venue"></label>
+      </div>
+      <label>RSVP link <small>(optional: Luma page or a form. The story sticker and Discord post use it; without one they link to linktr.ee/utip.)</small>
+        <input id="evRsvp" type="url" placeholder="https://luma.com/…" inputmode="url">
+      </label>
+      <label>Details <small>(shown in Discord and on the calendar)</small>
+        <textarea id="evDesc" maxlength="900" placeholder="All levels welcome! We'll pair beginners with experienced players. Bring water and sneakers."></textarea>
+      </label>
+      <fieldset>
+        <legend>Options</legend>
+        <label class="check"><input type="checkbox" id="evRepeat"> <span>Repeats weekly for <input id="evWeeks" type="number" min="2" max="20" value="10" style="width:5.5em;display:inline-block;padding:4px 8px"> weeks</span></label>
+        <label class="check"><input type="checkbox" id="evAnnounce"> <span>Also post a separate announcement in Discord <b>#announcements</b> (pings @Member)</span></label>
+        <label class="check disabled"><input type="checkbox" disabled> <span>Create a Luma event: connect Luma first (add it in claude.ai → Connectors)</span></label>
+      </fieldset>
+      <button class="btn" id="evSubmit" type="submit">Add to calendar</button>
+    </form>
+    <div class="results" id="evResults" aria-live="polite"></div>
+  </section>
+
+  <!-- ANNOUNCEMENT -->
+  <section class="panel" id="p-ann" role="tabpanel" aria-labelledby="tab-ann" hidden>
+    <h2>Send an announcement</h2>
+    <p class="lede">For news that isn't a calendar event: a court change, a rain cancellation, a social recap.</p>
+    <form id="annForm" novalidate>
+      <label>Headline <input id="annTitle" required maxlength="100" placeholder="Rain update: today's session moves indoors"></label>
+      <label>Message <textarea id="annBody" required maxlength="1500" placeholder="We're moving to Gregory Gym court 2, same time. See you there!"></textarea></label>
+      <label>Link <small>(optional)</small><input id="annLink" type="url" placeholder="https://…" inputmode="url"></label>
+      <fieldset>
+        <legend>Where</legend>
+        <label class="check"><input type="checkbox" id="annDiscord" checked> <span>Discord <b>#announcements</b></span></label>
+        <label class="check"><input type="checkbox" id="annPing" checked> <span>Ping @Member</span></label>
+        <label class="check"><input type="checkbox" id="annStory"> <span>Instagram story with a link sticker (goes to the link above, or linktr.ee/utip)</span></label>
+        <div class="row" id="annStoryOpts" hidden>
+          <label>Story image
+            <select id="annImg">
+              <option value="new">"New event just dropped!"</option>
+              <option value="tomorrow">"See you tomorrow!"</option>
+              <option value="join">"New club alert!"</option>
+            </select>
+          </label>
+          <label>When <small>(your local time; leave empty for now)</small><input id="annWhen" type="datetime-local"></label>
+        </div>
+      </fieldset>
+      <button class="btn" id="annSubmit" type="submit">Send announcement</button>
+    </form>
+    <div class="results" id="annResults" aria-live="polite"></div>
+  </section>
+
+  <!-- UPCOMING -->
+  <section class="panel" id="p-up" role="tabpanel" aria-labelledby="tab-up" hidden>
+    <h2>Upcoming on the UTIP calendar</h2>
+    <p class="lede" id="upMeta">Loads from Google Calendar.</p>
+    <div class="list" id="upList"><div class="empty">Waiting for Google Calendar…</div></div>
+    <p class="note">To change or cancel an event, edit it in Google Calendar on the "UTIP · UT International Pickleball Club" calendar. Cancelled events are not announced.</p>
+  </section>
+
+  <nav class="links" aria-label="Club links">
+    <a href="https://linktr.ee/utip">Linktree</a>
+    <a href="https://calendar.google.com/calendar/r?cid=5b94b9099a75cdd09d5b2955846f51de4a1bc5f9cfe1f6cbc2ffb269739be73b@group.calendar.google.com">UTIP calendar</a>
+    <a href="https://discord.gg/uFwZuz9KA9">Discord</a>
+    <a href="https://instagram.com/utip_austin">Instagram</a>
+    <a href="https://publish.buffer.com">Buffer queue</a>
+    <a href="https://docs.google.com/forms/d/17o2rVdPNrBEjgDV7YBRsa606WnHy3M1pSTuXpJi-wNA/edit">Member form (edit)</a>
+  </nav>
+</main>
+
+<script>
+(() => {
+  const CAL = "5b94b9099a75cdd09d5b2955846f51de4a1bc5f9cfe1f6cbc2ffb269739be73b@group.calendar.google.com";
+  const TZ = "America/Chicago";
+  const LINKTREE = "https://linktr.ee/utip";
+  const ANNOUNCE_CHANNEL = "1575566189479071919";
+  const MEMBER_ROLE = "1575567325023838290";
+  const IG_CHANNEL = "6b086b7c8541f09ecbb2d713";
+  const LOGO = "https://raw.githubusercontent.com/pe-tanman/utip_setup/a4e0204dcc98f5c160a84f268cc803f1d595f451/exports/instagram/profile-picture.png";
+  const STORY = {
+    new: "https://raw.githubusercontent.com/pe-tanman/utip_setup/7384870aa067a78cd528420666d29247a59c3aa1/exports/instagram/stories/story-event-generic-01.png",
+    tomorrow: "https://raw.githubusercontent.com/pe-tanman/utip_setup/7384870aa067a78cd528420666d29247a59c3aa1/exports/instagram/stories/story-event-generic-02.png",
+    join: "https://raw.githubusercontent.com/pe-tanman/utip_setup/09bf99561f7713340c429360cde016eb036f9391/exports/instagram/stories/story-join.png",
+  };
+  const $ = (id) => document.getElementById(id);
+  let mcp = null;
+
+  // ---------- tabs ----------
+  const tabs = [["tab-event", "p-event"], ["tab-ann", "p-ann"], ["tab-up", "p-up"]];
+  function show(tabId) {
+    for (const [t, p] of tabs) {
+      const on = t === tabId;
+      $(t).setAttribute("aria-selected", String(on));
+      $(p).hidden = !on;
+    }
+    if (tabId === "tab-up") startUpcoming();
+  }
+  for (const [t] of tabs) $(t).addEventListener("click", () => show(t));
+
+  // ---------- small UI helpers ----------
+  function result(box, kind, title, detail) {
+    const div = document.createElement("div");
+    div.className = "res " + kind;
+    const icon = document.createElement("div");
+    icon.textContent = kind === "ok" ? "✓" : kind === "bad" ? "✕" : "→";
+    const text = document.createElement("div");
+    const b = document.createElement("b"); b.textContent = title; text.appendChild(b);
+    if (detail) { const s = document.createElement("span"); s.textContent = detail; text.appendChild(s); }
+    div.append(icon, text);
+    box.appendChild(div);
+  }
+  function explain(err, server) {
+    const code = err && err.code;
+    switch (code) {
+      case "server_not_connected": return `${server} isn't connected for you. Add it in claude.ai → Settings → Connectors, then reload.`;
+      case "needs_reauth": return `${server} needs reconnecting: claude.ai → Settings → Connectors.`;
+      case "selection_required": return `You have more than one ${server} connector. Choose one when claude.ai asks, then try again.`;
+      case "not_in_manifest": return `${server} isn't allowed for this page. Allow it from the page's Permissions menu.`;
+      case "approval_required": return `${server} needs your approval. Press the button again and choose Allow.`;
+      case "blocked_by_policy": return `Your organization blocks this ${server} action.`;
+      case "server_unavailable": return `${server} didn't answer. It may still have gone through; check before trying again.`;
+      case "tool_error": return `${server} reported an error: ${String(err.message || "").slice(0, 220)}`;
+      case "not_granted": case "capability_disabled": case "capability_removed":
+        return "Connectors aren't available in this view. Open the page on claude.ai.";
+      default: return `${server}: ${String((err && err.message) || "unknown error").slice(0, 220)}`;
+    }
+  }
+  const isHttps = (s) => /^https:\/\/\S+$/i.test(s);
+
+  // ---------- connector status ----------
+  async function refreshStatus() {
+    const chips = document.querySelectorAll("#status [data-server]");
+    if (!mcp) {
+      chips.forEach((c) => (c.querySelector(".dot").className = "dot bad"));
+      return;
+    }
+    try {
+      const { servers } = await mcp.listTools();
+      chips.forEach((c) => {
+        const s = servers.find((x) => x.server === c.dataset.server);
+        const dot = c.querySelector(".dot");
+        if (!s) dot.className = "dot bad";
+        else if (s.authStatus === "needs_reauth") dot.className = "dot warn";
+        else dot.className = "dot ok";
+        c.title = !s ? "Not connected" : s.authStatus === "needs_reauth" ? "Needs reconnect" : "Ready (asks permission on first use)";
+      });
+    } catch { /* keep neutral dots */ }
+  }
+
+  // ---------- Discord via Zapier ----------
+  function discordPost(content, ping) {
+    return mcp.callTool("Zapier", "execute_zapier_write_action", {
+      selected_api: "DiscordCLIAPI",
+      action: "send_channel_message",
+      params: {
+        channel_id: ANNOUNCE_CHANNEL,
+        content: content.slice(0, 1990),
+        ping_usernames: !!ping,
+        username: "UTIP Announcements",
+        avatar_url: LOGO,
+      },
+    });
+  }
+
+  // ---------- NEW EVENT ----------
+  $("evPlace").addEventListener("change", () => { $("evOtherWrap").hidden = $("evPlace").value !== "__other"; });
+  try { $("evDate").value = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10); } catch {}
+
+  $("eventForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const box = $("evResults"); box.textContent = "";
+    const title = $("evTitle").value.trim();
+    const date = $("evDate").value, start = $("evStart").value, end = $("evEnd").value;
+    const place = $("evPlace").value === "__other" ? $("evOther").value.trim() : $("evPlace").value;
+    const rsvp = $("evRsvp").value.trim();
+    const desc = $("evDesc").value.trim();
+    if (!title || !date || !start || !end) return result(box, "bad", "Fill in the title, date and times.");
+    if (end <= start) return result(box, "bad", "The end time has to be after the start time.");
+    if (rsvp && !isHttps(rsvp)) return result(box, "bad", "The RSVP link should start with https://");
+    if (!mcp) return result(box, "bad", "Connectors aren't available here.", " Open this page on claude.ai.");
+
+    const btn = $("evSubmit"); btn.disabled = true; btn.textContent = "Adding…";
+    const description = [rsvp ? `RSVP: ${rsvp}` : null, desc || null, "All links: " + LINKTREE].filter(Boolean).join("\n\n");
+    const input = {
+      calendarId: CAL,
+      summary: title,
+      startTime: `${date}T${start}:00`,
+      endTime: `${date}T${end}:00`,
+      timeZone: TZ,
+      location: place || undefined,
+      description,
+    };
+    if ($("evRepeat").checked) {
+      const n = Math.min(20, Math.max(2, parseInt($("evWeeks").value, 10) || 10));
+      input.recurrenceData = [`RRULE:FREQ=WEEKLY;COUNT=${n}`];
+    }
+    try {
+      const r = await mcp.callTool("Google Calendar", "create_event", input);
+      const link = r && r.payload && r.payload.htmlLink;
+      result(box, "ok", "Added to the UTIP calendar.", link ? " Open it in Google Calendar to double-check." : "");
+      result(box, "info", "Discord #events post and Instagram story are on their way.", " Zapier checks the calendar every few minutes. The reminder goes out 24 hours before.");
+      try { await mcp.invalidate("Google Calendar", "list_events"); } catch {}
+      if ($("evAnnounce").checked) {
+        const when = new Date(`${date}T${start}:00`).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+        const content = [`<@&${MEMBER_ROLE}> 📣 **${title}**`, `🗓 ${when} (Austin time)`, place ? `📍 ${place}` : null, desc || null, rsvp ? `👉 RSVP: <${rsvp}>` : `All links: <${LINKTREE}>`]
+          .filter(Boolean).join("\n");
+        try { await discordPost(content, true); result(box, "ok", "Posted in Discord #announcements."); }
+        catch (err) { result(box, "bad", "Discord announcement didn't go out.", " " + explain(err, "Zapier")); }
+      }
+      $("eventForm").reset();
+      $("evOtherWrap").hidden = true;
+    } catch (err) {
+      result(box, "bad", "The event wasn't added.", " " + explain(err, "Google Calendar"));
+    } finally {
+      btn.disabled = false; btn.textContent = "Add to calendar";
+    }
+  });
+
+  // ---------- ANNOUNCEMENT ----------
+  $("annStory").addEventListener("change", () => { $("annStoryOpts").hidden = !$("annStory").checked; });
+  $("annForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const box = $("annResults"); box.textContent = "";
+    const title = $("annTitle").value.trim(), body = $("annBody").value.trim(), link = $("annLink").value.trim();
+    const toDiscord = $("annDiscord").checked, toStory = $("annStory").checked;
+    if (!title || !body) return result(box, "bad", "Write a headline and a message.");
+    if (link && !isHttps(link)) return result(box, "bad", "The link should start with https://");
+    if (!toDiscord && !toStory) return result(box, "bad", "Pick at least one place to send it.");
+    if (!mcp) return result(box, "bad", "Connectors aren't available here.", " Open this page on claude.ai.");
+
+    const btn = $("annSubmit"); btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      if (toDiscord) {
+        const content = [($("annPing").checked ? `<@&${MEMBER_ROLE}> ` : "") + `📣 **${title}**`, body, link ? `👉 <${link}>` : null].filter(Boolean).join("\n");
+        try { await discordPost(content, $("annPing").checked); result(box, "ok", "Posted in Discord #announcements."); }
+        catch (err) { result(box, "bad", "Discord post didn't go out.", " " + explain(err, "Zapier")); }
+      }
+      if (toStory) {
+        const whenVal = $("annWhen").value;
+        let mode = "shareNow", dueAt;
+        if (whenVal) {
+          const d = new Date(whenVal);
+          if (!(d.getTime() > Date.now() + 60000)) { result(box, "bad", "The story time has to be in the future."); return; }
+          mode = "customScheduled"; dueAt = d.toISOString().replace(/\.\d{3}Z$/, "Z");
+        }
+        const input = {
+          channelId: IG_CHANNEL,
+          schedulingType: "automatic",
+          mode,
+          assets: [{ image: { url: STORY[$("annImg").value], metadata: { altText: `${title}. Tap the link for details.` } } }],
+          metadata: { instagram: { type: "story", shouldShareToFeed: false, link: link || LINKTREE } },
+        };
+        if (dueAt) input.dueAt = dueAt;
+        try {
+          await mcp.callTool("Buffer", "create_post", input);
+          result(box, "ok", dueAt ? "Instagram story scheduled in Buffer." : "Instagram story sent to Buffer to publish now.", " Link sticker: " + (link || LINKTREE));
+        } catch (err) { result(box, "bad", "Instagram story wasn't created.", " " + explain(err, "Buffer")); }
+      }
+    } finally {
+      btn.disabled = false; btn.textContent = "Send announcement";
+    }
+  });
+
+  // ---------- UPCOMING ----------
+  let unwatch = null;
+  function renderEvents(payload) {
+    const list = $("upList"); list.textContent = "";
+    const events = (payload && Array.isArray(payload.events) ? payload.events : []).filter((ev) => ev.status !== "cancelled");
+    if (!events.length) {
+      const d = document.createElement("div"); d.className = "empty";
+      d.textContent = "Nothing scheduled yet. Add the first event in the New event tab.";
+      list.appendChild(d); return;
+    }
+    for (const ev of events) {
+      const startStr = (ev.start && (ev.start.dateTime || ev.start.date)) || "";
+      const dt = startStr ? new Date(startStr) : null;
+      const card = document.createElement("article"); card.className = "ev";
+      const date = document.createElement("div"); date.className = "date";
+      const m = document.createElement("div"); m.className = "m"; m.textContent = dt ? dt.toLocaleString(undefined, { month: "short", timeZone: TZ }) : "";
+      const dd = document.createElement("div"); dd.className = "d"; dd.textContent = dt ? dt.toLocaleString(undefined, { day: "numeric", timeZone: TZ }) : "?";
+      date.append(m, dd);
+      const info = document.createElement("div"); info.style.minWidth = "0";
+      const h = document.createElement("h3"); h.textContent = ev.summary || "(untitled)";
+      const p = document.createElement("p");
+      p.textContent = [dt && ev.start.dateTime ? dt.toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit", timeZone: TZ }) : "All day", ev.location].filter(Boolean).join(" · ");
+      info.append(h, p);
+      if (typeof ev.htmlLink === "string" && isHttps(ev.htmlLink)) {
+        const a = document.createElement("a"); a.href = ev.htmlLink; a.textContent = "Open in Google Calendar"; a.target = "_blank"; a.rel = "noopener";
+        const pp = document.createElement("p"); pp.appendChild(a); info.appendChild(pp);
+      }
+      card.append(date, info); list.appendChild(card);
+    }
+  }
+  function startUpcoming() {
+    if (unwatch || !mcp) {
+      if (!mcp) { $("upList").textContent = ""; const d = document.createElement("div"); d.className = "empty"; d.textContent = "Connectors aren't available here. Open this page on claude.ai."; $("upList").appendChild(d); }
+      return;
+    }
+    unwatch = mcp.watchTool("Google Calendar", "list_events", { calendarId: CAL, orderBy: "startTime", pageSize: 20 }, (evt) => {
+      if (evt.type === "data") {
+        renderEvents(evt.result.payload);
+        const at = evt.result.cache ? new Date(evt.result.cache.storedAt) : new Date();
+        $("upMeta").textContent = "Updated " + at.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) + ". Refreshes every 2 minutes.";
+      } else {
+        const code = evt.error && evt.error.code;
+        if (["needs_reauth", "server_not_connected", "blocked_by_policy", "approval_required", "not_in_manifest"].includes(code)) {
+          $("upList").textContent = "";
+          const d = document.createElement("div"); d.className = "empty"; d.textContent = explain(evt.error, "Google Calendar");
+          $("upList").appendChild(d);
+          if (code === "approval_required") {
+            const b = document.createElement("button"); b.className = "btn ghost"; b.textContent = "Allow Google Calendar and load events";
+            b.addEventListener("click", async () => {
+              try { const r = await mcp.callTool("Google Calendar", "list_events", { calendarId: CAL, orderBy: "startTime", pageSize: 20 }); renderEvents(r.payload); }
+              catch (err) { d.textContent = explain(err, "Google Calendar"); }
+            });
+            $("upList").appendChild(b);
+          }
+        } else {
+          $("upMeta").textContent = "Couldn't refresh just now; showing the last list. " + explain(evt.error, "Google Calendar");
+        }
+      }
+    }, { refetchInterval: 120000 });
+  }
+
+  // ---------- boot ----------
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("mcp").then((ns) => { mcp = ns; refreshStatus(); }).catch(() => { mcp = null; refreshStatus(); });
+  } else {
+    refreshStatus();
+  }
+})();
+</script>
