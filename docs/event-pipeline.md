@@ -11,6 +11,8 @@ Officers only ever do step 1.
         │       posts title, time (shown in each viewer's timezone), place, details,
         │       RSVP link, "react ✅ if you're coming", add-to-calendar link; pings @Member
         │
+        ├──▶ (same run) Instagram FEED POST "New event!" via Buffer API                  ✅ live
+        │       post-event-generic.png; caption = title, Austin date/time, place, details, RSVP link
         ├──▶ (same run) Instagram story "New event just dropped!" via Buffer API         ✅ live
         │       story-event-generic-01.png + link sticker → RSVP link (or linktr.ee/utip)
         │
