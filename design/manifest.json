@@ -122,5 +122,15 @@
       "ev-new",
       "ev-tomorrow"
     ]
+  },
+  {
+    "name": "post-event-generic",
+    "template": "post-event.html",
+    "folder": "instagram",
+    "width": 1080,
+    "height": 1350,
+    "pages": [
+      "generic"
+    ]
   }
 ]
