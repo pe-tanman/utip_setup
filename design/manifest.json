@@ -111,5 +111,16 @@
     "pages": [
       "event"
     ]
+  },
+  {
+    "name": "story-event-generic",
+    "template": "story.html",
+    "folder": "instagram/stories",
+    "width": 1080,
+    "height": 1920,
+    "pages": [
+      "ev-new",
+      "ev-tomorrow"
+    ]
   }
 ]
